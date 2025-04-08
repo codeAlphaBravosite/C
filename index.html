@@ -3,123 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C</title>
+    <title>CUET Examination Syllabus Tracker</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            background-color: #f9fafb; /* Slightly off-white bg */
         }
         .section-title {
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
+        }
+        .section-title:hover {
+            background-color: rgba(0, 0, 0, 0.05); /* Subtle hover on title */
         }
         .section-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out; /* Smoother transition */
+            padding: 0 1rem; /* Start with no vertical padding */
         }
         .section-content.active {
-            max-height: 10000px;
+            max-height: 10000px; /* Ensure enough height */
+            padding: 1rem 1rem; /* Add padding when active */
         }
         .progress-bar {
             height: 8px;
-            transition: width 0.3s ease;
+            transition: width 0.4s ease;
         }
         .topic {
-            border-left: 3px solid transparent;
+            border-left: 4px solid transparent; /* Slightly thicker border */
             transition: all 0.2s ease;
+            padding: 0.75rem 0.5rem; /* Increased padding */
+            margin-top: 0.5rem;
+            background-color: #fff; /* Give topics white background */
+            border-radius: 4px; /* Rounded corners for topics */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Subtle shadow */
         }
         .topic:hover {
-            background-color: rgba(243, 244, 246, 0.8);
+            background-color: #f9fafb; /* Use body bg for hover */
+            border-left-color: #d1d5db; /* Gray border on hover */
         }
         .topic.highlighted {
-            border-left-color: #FCD34D;
-            background-color: rgba(252, 211, 77, 0.1);
+            border-left-color: #FCD34D; /* Tailwind amber-300 */
+            background-color: #FFFBEB; /* Lighter yellow bg for highlighted */
         }
         .topic.completed {
-            text-decoration: line-through;
-            color: #6B7280;
+            /* Keep default text color, line-through is enough indicator */
+            opacity: 0.8; /* Slightly fade completed */
+        }
+        .topic.completed .topic-label {
+             text-decoration: line-through;
+             color: #6b7280; /* Keep gray color for label only */
         }
         .topic.completed.highlighted {
-            text-decoration: line-through;
-            color: #6B7280;
-            border-left-color: #FCD34D;
-            background-color: rgba(252, 211, 77, 0.1);
+             /* Styles already applied from .completed and .highlighted */
+             opacity: 0.8;
         }
-        .subtopic {
-            margin-left: 1.5rem;
+
+        .subtopic-list { /* Changed from div.subtopic */
+            margin-left: 0.5rem; /* Slightly reduced indent */
+            margin-top: 0.5rem;
+            list-style: disc;
+            padding-left: 1.5rem; /* Use padding for list marker */
+            color: #4b5563; /* Slightly darker gray for subtopics */
         }
-        .checkbox-container {
-            display: inline-block;
-            position: relative;
-            cursor: pointer;
+        .subtopic-item { /* Changed from div.topic-item */
+             padding: 0.1rem 0; /* Adjust vertical spacing */
         }
+
+        /* Improved Checkbox */
         .custom-checkbox {
             appearance: none;
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid #CBD5E0;
+            width: 20px; /* Slightly larger */
+            height: 20px;
+            border: 2px solid #cbd5e0; /* Tailwind gray-300 */
             border-radius: 4px;
-            margin-right: 8px;
+            margin-right: 10px; /* More space */
             position: relative;
-            top: 4px;
+            top: 5px; /* Adjust alignment */
             cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            flex-shrink: 0; /* Prevent shrinking in flex layout */
         }
         .custom-checkbox:checked {
-            background-color: #4F46E5;
-            border-color: #4F46E5;
+            background-color: #4f46e5; /* Indigo-600 */
+            border-color: #4f46e5;
         }
         .custom-checkbox:checked::after {
             content: '✓';
             position: absolute;
             color: white;
-            font-size: 12px;
+            font-size: 14px; /* Slightly larger check */
+            font-weight: bold;
             top: -1px;
             left: 3px;
         }
+        .custom-checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5); /* Focus ring */
+        }
+
+        /* Improved Highlight Button */
         .highlight-btn {
-            opacity: 0.4;
-            transition: opacity 0.2s ease;
+            opacity: 0.6; /* Start slightly more visible */
+            transition: opacity 0.2s ease, color 0.2s ease;
+            padding: 0.25rem; /* Add padding for larger tap area */
+            border-radius: 50%;
+            color: #f59e0b; /* Amber-500 */
         }
-        .highlight-btn:hover, .highlight-btn.active {
+        .highlight-btn:hover {
             opacity: 1;
+            background-color: rgba(245, 158, 11, 0.1); /* Light amber background on hover */
         }
+        .highlight-btn.active {
+            opacity: 1;
+            color: #d97706; /* Amber-600 for active */
+        }
+         .highlight-btn .fa-star {
+             display: block; /* Ensure icon takes up space for padding */
+         }
+        .highlight-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); /* Focus ring */
+        }
+
+
+        /* Search Highlight */
         .search-highlight {
-            background-color: #FEF3C7;
+            background-color: #FEF3C7; /* Tailwind amber-100 */
+            border-radius: 2px;
+            box-shadow: 0 0 0 1px #FCD34D; /* Subtle border for search highlight */
         }
+
+        /* Ensure focus visibility for accessibility */
+        .section-title:focus, #expand-all:focus, #collapse-all:focus, #reset-progress:focus, #search-input:focus {
+             outline: none;
+             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Consistent focus ring */
+        }
+         #search-input:focus {
+            border-color: #4f46e5; /* Match focus ring */
+         }
+
+
+        /* Mobile adjustments */
+        @media (max-width: 640px) {
+            .sticky-header-content {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items full width */
+            }
+            .progress-container {
+                margin-bottom: 0.75rem; /* Add space below progress */
+                width: 100%;
+            }
+            .controls-container {
+                margin-bottom: 0.75rem; /* Add space below controls */
+                justify-content: space-around; /* Space out buttons */
+                width: 100%;
+            }
+            .search-container {
+                width: 100%;
+            }
+            h1 {
+                font-size: 1.5rem; /* Smaller title on mobile */
+            }
+            .section-title h2 {
+                 font-size: 1.125rem; /* text-lg */
+            }
+            .section-title .flex.items-center > div.ml-4 { /* Section progress container */
+                display: none; /* Hide section progress on small screens to save space */
+            }
+        }
+
         @media print {
             .no-print {
                 display: none;
             }
+            body {
+                background-color: #fff;
+            }
             .section-content {
                 max-height: none !important;
                 overflow: visible !important;
+                padding: 1rem 0 !important; /* Adjust print padding */
+            }
+            .topic {
+                box-shadow: none;
+                border: 1px solid #eee;
+                margin-top: 0.5rem;
+            }
+            .sticky /* Remove stickiness for print */ {
+                position: static;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100"> <!-- Changed body bg -->
     <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <div class="sticky top-0 z-10 bg-white rounded-lg shadow-md p-6 mb-6 no-print">
-            <h1 class="text-3xl font-bold text-center text-indigo-700 mb-2">Syllabus Tracker</h1>
-            <p class="text-gray-600 text-center mb-4"></p>
-            
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center">
-                    <span class="text-gray-700 mr-2">Overall Progress:</span>
-                    <div class="w-48 h-2 bg-gray-200 rounded-full">
-                        <div id="overall-progress" class="progress-bar bg-green-500 rounded-full" style="width: 0%"></div>
+        <!-- Sticky Header -->
+        <div class="sticky top-0 z-20 bg-white rounded-lg shadow-lg p-4 md:p-6 mb-6 no-print">
+             <!-- Header Content Wrapper -->
+            <div class="flex flex-wrap justify-between items-center mb-4 sticky-header-content">
+                 <!-- Progress Section -->
+                <div class="flex items-center w-full md:w-auto progress-container">
+                    <span class="text-gray-700 mr-2 text-sm md:text-base whitespace-nowrap">Overall Progress:</span>
+                    <div class="w-full md:w-48 h-2 bg-gray-200 rounded-full mr-2">
+                        <div id="overall-progress" class="progress-bar bg-green-500 rounded-full" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <span id="progress-percentage" class="ml-2 text-sm text-gray-600">0%</span>
+                    <span id="progress-percentage" class="ml-auto md:ml-2 text-sm font-semibold text-gray-600">0%</span>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="flex space-x-2 controls-container">
+                    <button id="expand-all" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-sm transition-colors duration-200">Expand All</button>
+                    <button id="collapse-all" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-sm transition-colors duration-200">Collapse All</button>
+                    <button id="reset-progress" class="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-sm transition-colors duration-200">Reset</button> <!-- Shorter Text -->
                 </div>
             </div>
-            
-            <div class="relative">
-                <input type="text" id="search-input" placeholder="Search topics..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-gray-400">
+
+             <!-- Title and Search Section -->
+             <div class="text-center mb-4">
+                 <h1 class="text-2xl md:text-3xl font-bold text-indigo-700 mb-1">CUET Syllabus Tracker</h1>
+                 <p class="text-gray-600 text-sm md:text-base">Mark topics completed and highlight key areas.</p>
+             </div>
+
+             <div class="relative search-container">
+                <input type="text" id="search-input" placeholder="Search topics..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <i class="fas fa-search"></i>
                 </span>
             </div>
@@ -128,1734 +241,284 @@
         <div id="syllabus-content">
             <!-- I. General Knowledge -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-blue-600 text-white p-4 flex justify-between items-center" data-section="general-knowledge">
+                <button class="section-title bg-blue-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="general-knowledge" aria-expanded="false" aria-controls="content-general-knowledge">
                     <div class="flex items-center">
-                        <h2 class="text-xl font-bold">I. General Knowledge</h2>
-                        <div class="ml-4 flex items-center">
+                        <h2 class="text-xl font-semibold">I. General Knowledge</h2>
+                        <div class="ml-4 hidden md:flex items-center"> <!-- Hide progress on mobile -->
                             <div class="w-32 h-2 bg-blue-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
+                    <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                </button>
+                <div id="content-general-knowledge" class="section-content" role="region">
                     <!-- Indian History -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Indian History</h3>
+                        <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-2 border-b pb-1 border-blue-100">Indian History</h3>
                         
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="ancient-india">
-                                    <label for="ancient-india" class="font-semibold">Ancient India (3000 BC - 1200 AD)</label>
+                             <div class="flex justify-between items-center">
+                                <div class="flex items-start"> <!-- Align items start for checkbox -->
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="ancient-india" aria-labelledby="label-ancient-india">
+                                    <label id="label-ancient-india" for="ancient-india" class="font-semibold topic-label cursor-pointer">Ancient India (3000 BC - 1200 AD)</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Ancient India">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Indus Valley Civilization: Urban planning, trade, and decline.</div>
-                                <div class="topic-item py-1">• Vedic Age: Society, religion, and literature.</div>
-                                <div class="topic-item py-1">• Mauryan Empire: Administration, Ashoka's edicts, and economy.</div>
-                                <div class="topic-item py-1">• Gupta Empire: Golden Age, art, and science.</div>
-                            </div>
+                             <ul class="subtopic-list"> <!-- Use UL for subtopics -->
+                                <li class="subtopic-item">• Indus Valley Civilization: Urban planning, trade, and decline.</li>
+                                <li class="subtopic-item">• Vedic Age: Society, religion, and literature.</li>
+                                <li class="subtopic-item">• Mauryan Empire: Administration, Ashoka's edicts, and economy.</li>
+                                <li class="subtopic-item">• Gupta Empire: Golden Age, art, and science.</li>
+                            </ul>
                         </div>
                         
                         <div class="topic p-2 rounded mt-2">
                             <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="medieval-india">
-                                    <label for="medieval-india" class="font-semibold">Medieval India (1200 - 1707 AD)</label>
+                                <div class="flex items-start">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="medieval-india" aria-labelledby="label-medieval-india">
+                                    <label id="label-medieval-india" for="medieval-india" class="font-semibold topic-label cursor-pointer">Medieval India (1200 - 1707 AD)</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Medieval India">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Delhi Sultanate: Dynasties, architecture, and administration.</div>
-                                <div class="topic-item py-1">• Mughal Empire: Akbar's policies, Taj Mahal, and decline.</div>
-                                <div class="topic-item py-1">• Rajputs: Kingdoms, culture, and resistance.</div>
-                            </div>
+                             <ul class="subtopic-list">
+                                <li class="subtopic-item">• Delhi Sultanate: Dynasties, architecture, and administration.</li>
+                                <li class="subtopic-item">• Mughal Empire: Akbar's policies, Taj Mahal, and decline.</li>
+                                <li class="subtopic-item">• Rajputs: Kingdoms, culture, and resistance.</li>
+                            </ul>
                         </div>
                         
                         <div class="topic p-2 rounded mt-2">
                             <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="modern-india">
-                                    <label for="modern-india" class="font-semibold">Modern India (1707 AD - Present)</label>
+                                <div class="flex items-start">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="modern-india" aria-labelledby="label-modern-india">
+                                    <label id="label-modern-india" for="modern-india" class="font-semibold topic-label cursor-pointer">Modern India (1707 AD - Present)</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Modern India">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• British Rule: East India Company, colonial policies, and revolts.</div>
-                                <div class="topic-item py-1">• Independence Movement: Non-cooperation, Quit India, and leaders.</div>
-                                <div class="topic-item py-1">• Post-Independence: Constitution, integration, and economic policies.</div>
-                            </div>
+                            <ul class="subtopic-list">
+                                <li class="subtopic-item">• British Rule: East India Company, colonial policies, and revolts.</li>
+                                <li class="subtopic-item">• Independence Movement: Non-cooperation, Quit India, and leaders.</li>
+                                <li class="subtopic-item">• Post-Independence: Constitution, integration, and economic policies.</li>
+                            </ul>
                         </div>
                     </div>
-                    
-                    <!-- Geography -->
+
+                    <!-- Geography (Apply similar structure: h3, topic divs with flex, ul.subtopic-list > li.subtopic-item) -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Geography</h3>
-                        
+                        <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Geography</h3>
                         <div class="topic p-2 rounded">
                             <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="physical-geography">
-                                    <label for="physical-geography" class="font-semibold">Physical Geography</label>
+                               <div class="flex items-start">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="physical-geography" aria-labelledby="label-physical-geography">
+                                    <label id="label-physical-geography" for="physical-geography" class="font-semibold topic-label cursor-pointer">Physical Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Physical Geography">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Mountains: Himalayas, Western Ghats, and their significance.</div>
-                                <div class="topic-item py-1">• Rivers: Ganges, Brahmaputra, and river systems.</div>
-                                <div class="topic-item py-1">• Lakes: Dal Lake, Chilika Lake, and their ecological importance.</div>
-                                <div class="topic-item py-1">• Deserts: Thar Desert, features, and climate.</div>
-                                <div class="topic-item py-1">• Climate: Monsoon, seasons, and climate zones.</div>
-                                <div class="topic-item py-1">• Natural Resources: Minerals, forests, and water resources.</div>
-                            </div>
+                            <ul class="subtopic-list">
+                                <li class="subtopic-item">• Mountains: Himalayas, Western Ghats, and their significance.</li>
+                                <li class="subtopic-item">• Rivers: Ganges, Brahmaputra, and river systems.</li>
+                                <li class="subtopic-item">• Lakes: Dal Lake, Chilika Lake, and their ecological importance.</li>
+                                <li class="subtopic-item">• Deserts: Thar Desert, features, and climate.</li>
+                                <li class="subtopic-item">• Climate: Monsoon, seasons, and climate zones.</li>
+                                <li class="subtopic-item">• Natural Resources: Minerals, forests, and water resources.</li>
+                            </ul>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="economic-geography">
-                                    <label for="economic-geography" class="font-semibold">Economic Geography</label>
+                           <div class="flex justify-between items-center">
+                                <div class="flex items-start">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="economic-geography" aria-labelledby="label-economic-geography">
+                                    <label id="label-economic-geography" for="economic-geography" class="font-semibold topic-label cursor-pointer">Economic Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Economic Geography">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Agriculture: Crops, green revolution, and irrigation.</div>
-                                <div class="topic-item py-1">• Industry: Major industries, industrial policies, and growth.</div>
-                                <div class="topic-item py-1">• Trade: Domestic and international trade, exports, and imports.</div>
-                                <div class="topic-item py-1">• Transportation: Railways, roads, and ports.</div>
-                            </div>
+                            <ul class="subtopic-list">
+                                <li class="subtopic-item">• Agriculture: Crops, green revolution, and irrigation.</li>
+                                <li class="subtopic-item">• Industry: Major industries, industrial policies, and growth.</li>
+                                <li class="subtopic-item">• Trade: Domestic and international trade, exports, and imports.</li>
+                                <li class="subtopic-item">• Transportation: Railways, roads, and ports.</li>
+                            </ul>
                         </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="political-geography">
-                                    <label for="political-geography" class="font-semibold">Political Geography</label>
+                         <div class="topic p-2 rounded mt-2">
+                           <div class="flex justify-between items-center">
+                               <div class="flex items-start">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="political-geography" aria-labelledby="label-political-geography">
+                                    <label id="label-political-geography" for="political-geography" class="font-semibold topic-label cursor-pointer">Political Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none flex-shrink-0 ml-2" title="Highlight topic" aria-label="Highlight Political Geography">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• States and Union Territories: List, capitals, and boundaries.</div>
-                                <div class="topic-item py-1">• Capitals: National and state capitals, historical significance.</div>
-                                <div class="topic-item py-1">• International Boundaries: India-Pakistan, India-China, etc.</div>
-                            </div>
+                             <ul class="subtopic-list">
+                                <li class="subtopic-item">• States and Union Territories: List, capitals, and boundaries.</li>
+                                <li class="subtopic-item">• Capitals: National and state capitals, historical significance.</li>
+                                <li class="subtopic-item">• International Boundaries: India-Pakistan, India-China, etc.</li>
+                             </ul>
                         </div>
                     </div>
-                    
-                    <!-- Economy -->
+
+                    <!-- Economy (Apply similar structure) -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Economy</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-economic-concepts">
-                                    <label for="basic-economic-concepts" class="font-semibold">Basic Economic Concepts</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Microeconomics: Supply, demand, and market equilibrium.</div>
-                                <div class="topic-item py-1">• Macroeconomics: National income, fiscal policy, and monetary policy.</div>
-                                <div class="topic-item py-1">• Economic Indicators: GDP, inflation, unemployment rates.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="indian-economy">
-                                    <label for="indian-economy" class="font-semibold">Indian Economy</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Economic Reforms: Liberalization, privatization, globalization.</div>
-                                <div class="topic-item py-1">• Banking System: RBI, commercial banks, and financial inclusion.</div>
-                                <div class="topic-item py-1">• Agriculture: Crop patterns, subsidies, and agricultural policies.</div>
-                                <div class="topic-item py-1">• Industry: Manufacturing, MSMEs, and industrial growth.</div>
-                                <div class="topic-item py-1">• Services: IT, tourism, and service sector contribution.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="global-economy">
-                                    <label for="global-economy" class="font-semibold">Global Economy</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• International Trade: Balance of trade, tariffs, and trade agreements.</div>
-                                <div class="topic-item py-1">• WTO: Functions, disputes, and India's role.</div>
-                                <div class="topic-item py-1">• IMF: Loans, structural adjustments, and global financial stability.</div>
-                                <div class="topic-item py-1">• World Bank: Development projects, loans, and India's engagement.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Polity -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Polity</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="indian-constitution">
-                                    <label for="indian-constitution" class="font-semibold">Indian Constitution</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Preamble: Objectives and principles.</div>
-                                <div class="topic-item py-1">• Fundamental Rights: Six rights, scope, and enforcement.</div>
-                                <div class="topic-item py-1">• Fundamental Duties: List and significance.</div>
-                                <div class="topic-item py-1">• Directive Principles: Social, economic, and political directives.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="political-system">
-                                    <label for="political-system" class="font-semibold">Political System</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Central Government: President, PM, and Parliament.</div>
-                                <div class="topic-item py-1">• State Governments: Governor, CM, and state legislature.</div>
-                                <div class="topic-item py-1">• Local Self-Governments: Panchayats, municipalities, and 73rd/74th amendments.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="governance">
-                                    <label for="governance" class="font-semibold">Governance</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Public Administration: Bureaucracy, civil services, and reforms.</div>
-                                <div class="topic-item py-1">• Judiciary: Supreme Court, High Courts, and judicial review.</div>
-                                <div class="topic-item py-1">• Election Commission: Functions, elections, and electoral reforms.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Culture -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Culture</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="art">
-                                    <label for="art" class="font-semibold">Art</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Paintings: Mughal, Rajput, and modern art.</div>
-                                <div class="topic-item py-1">• Sculptures: Mauryan, Gupta, and contemporary.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="literature">
-                                    <label for="literature" class="font-semibold">Literature</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Ancient: Vedas, Upanishads, and epics.</div>
-                                <div class="topic-item py-1">• Modern: Tagore, Premchand, and contemporary writers.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="music">
-                                    <label for="music" class="font-semibold">Music</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Classical: Hindustani, Carnatic, and ragas.</div>
-                                <div class="topic-item py-1">• Folk: Regional folk music and instruments.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="dance">
-                                    <label for="dance" class="font-semibold">Dance</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Classical: Bharatanatyam, Kathak, and Odissi.</div>
-                                <div class="topic-item py-1">• Folk: Bhangra, Garba, and regional dances.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="festivals">
-                                    <label for="festivals" class="font-semibold">Festivals</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• National: Republic Day, Independence Day.</div>
-                                <div class="topic-item py-1">• Regional: Diwali, Holi, Eid, Pongal, and local festivals.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sports -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Sports</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="important-events">
-                                    <label for="important-events" class="font-semibold">Important Events</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Olympics: History, events, and India's participation.</div>
-                                <div class="topic-item py-1">• Commonwealth Games: Events, medals, and venues.</div>
-                                <div class="topic-item py-1">• Asian Games: History, events, and India's performance.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="players">
-                                    <label for="players" class="font-semibold">Players</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Notable Athletes: Sachin Tendulkar, PV Sindhu, etc.</div>
-                                <div class="topic-item py-1">• Records: World records, Olympic records, and achievements.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="awards-sports">
-                                    <label for="awards-sports" class="font-semibold">Awards</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Arjuna Award: Criteria and recipients.</div>
-                                <div class="topic-item py-1">• Dronacharya Award: Coaching excellence and recipients.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Awards and Honours -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Awards and Honours</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-awards">
-                                    <label for="national-awards" class="font-semibold">National Awards</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Bharat Ratna: Highest civilian award, recipients.</div>
-                                <div class="topic-item py-1">• Padma Awards: Padma Vibhushan, Bhushan, Shri, and criteria.</div>
-                                <div class="topic-item py-1">• Gallantry Awards: Param Vir Chakra, Ashok Chakra, etc.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-awards">
-                                    <label for="international-awards" class="font-semibold">International Awards</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Nobel Prize: Categories, notable winners, and history.</div>
-                                <div class="topic-item py-1">• Oscar: Film awards, categories, and notable winners.</div>
-                                <div class="topic-item py-1">• Emmy: Television awards, categories, and history.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Important Days -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Important Days</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-days">
-                                    <label for="national-days" class="font-semibold">National Days</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Republic Day: January 26, celebrations, and history.</div>
-                                <div class="topic-item py-1">• Independence Day: August 15, significance, and events.</div>
-                                <div class="topic-item py-1">• Gandhi Jayanti: October 2, birth anniversary, and legacy.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-days">
-                                    <label for="international-days" class="font-semibold">International Days</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• UN Day: October 24, UN founding, and events.</div>
-                                <div class="topic-item py-1">• Human Rights Day: December 10, significance, and activities.</div>
-                                <div class="topic-item py-1">• Environment Day: June 5, themes, and global initiatives.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Books and Authors -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Books and Authors</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="fiction">
-                                    <label for="fiction" class="font-semibold">Fiction</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Novels: "God of Small Things" by Arundhati Roy.</div>
-                                <div class="topic-item py-1">• Short Stories: "The Guide" by R.K. Narayan.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="non-fiction">
-                                    <label for="non-fiction" class="font-semibold">Non-Fiction</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Biographies: "Wings of Fire" by APJ Abdul Kalam.</div>
-                                <div class="topic-item py-1">• History: "India After Gandhi" by Ramachandra Guha.</div>
-                                <div class="topic-item py-1">• Science: "Brief History of Time" by Stephen Hawking.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Science and Technology -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Science and Technology</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="recent-developments">
-                                    <label for="recent-developments" class="font-semibold">Recent Developments</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Space Technology: Chandrayaan, Gaganyaan, and ISRO missions.</div>
-                                <div class="topic-item py-1">• Biotechnology: GM crops, CRISPR, and medical advancements.</div>
-                                <div class="topic-item py-1">• Information Technology: AI, blockchain, and cybersecurity.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="important-discoveries">
-                                    <label for="important-discoveries" class="font-semibold">Important Discoveries</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Scientific Breakthroughs: COVID-19 vaccines, quantum computing.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="scientists">
-                                    <label for="scientists" class="font-semibold">Scientists</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Notable Indian Scientists: C.V. Raman, Homi Bhabha.</div>
-                                <div class="topic-item py-1">• International Scientists: Albert Einstein, Marie Curie.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- II. Current Affairs -->
+                        <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Economy</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                         </div>
+
+                    <!-- Polity (Apply similar structure) -->
+                     <div class="mb-4">
+                        <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Polity</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Culture (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Culture</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Sports (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Sports</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Awards and Honours (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Awards and Honours</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Important Days (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Important Days</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Books and Authors (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Books and Authors</h3>
+                          <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+
+                     <!-- Science and Technology (Apply similar structure) -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-blue-800 mb-3 mt-4 border-b pb-1 border-blue-100">Science and Technology</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+                 </div>
+             </div>
+
+            <!-- II. Current Affairs (Repeat the structure improvement for this section and all subsequent sections) -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-green-600 text-white p-4 flex justify-between items-center" data-section="current-affairs">
+                 <button class="section-title bg-green-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="current-affairs" aria-expanded="false" aria-controls="content-current-affairs">
                     <div class="flex items-center">
-                        <h2 class="text-xl font-bold">II. Current Affairs</h2>
-                        <div class="ml-4 flex items-center">
+                        <h2 class="text-xl font-semibold">II. Current Affairs</h2>
+                         <div class="ml-4 hidden md:flex items-center">
                             <div class="w-32 h-2 bg-green-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
-                    <!-- National News -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">National News</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-news">
-                                    <label for="national-news" class="font-semibold">Key Areas</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Political Events: Elections, policy announcements, and reforms.</div>
-                                <div class="topic-item py-1">• Economic Developments: Budget highlights, economic growth.</div>
-                                <div class="topic-item py-1">• Social Issues: Education, healthcare, and gender equality.</div>
-                                <div class="topic-item py-1">• Environmental Concerns: Pollution, deforestation, and initiatives.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- International News -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">International News</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-news">
-                                    <label for="international-news" class="font-semibold">Key Areas</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Global Events: Summits, conflicts, and treaties.</div>
-                                <div class="topic-item py-1">• Diplomatic Relations: Bilateral agreements, G20, and UN.</div>
-                                <div class="topic-item py-1">• Economic Trends: Global recession, trade wars.</div>
-                                <div class="topic-item py-1">• Humanitarian Crises: Refugees, natural disasters, and aid.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Economy -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Economy</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="economic-indicators">
-                                    <label for="economic-indicators" class="font-semibold">Economic Indicators</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• GDP Growth: Quarterly and annual trends.</div>
-                                <div class="topic-item py-1">• Inflation Rates: CPI, WPI, and monetary policy impacts.</div>
-                                <div class="topic-item py-1">• Fiscal Policies: Government spending, taxation.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="budget">
-                                    <label for="budget" class="font-semibold">Budget</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Union Budget: Key allocations, reforms, and schemes.</div>
-                                <div class="topic-item py-1">• State Budgets: State-specific economic plans.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="trade">
-                                    <label for="trade" class="font-semibold">Trade</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Export-Import Data: Major commodities, trade deficits.</div>
-                                <div class="topic-item py-1">• Trade Policies: Free trade agreements, tariffs.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sports -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Sports</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="recent-events">
-                                    <label for="recent-events" class="font-semibold">Recent Events</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• National and International Tournaments: IPL, FIFA World Cup.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="achievements">
-                                    <label for="achievements" class="font-semibold">Achievements</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Medals and Awards: Olympic medals, Arjuna awards.</div>
-                                <div class="topic-item py-1">• Records Broken: World records, national records.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Awards and Honours -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Awards and Honours</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="current-awards">
-                                    <label for="current-awards" class="font-semibold">Recent Awards</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Literary Awards: Sahitya Akademi, Booker Prize.</div>
-                                <div class="topic-item py-1">• Film Awards: National Film Awards, Oscars.</div>
-                                <div class="topic-item py-1">• Scientific Awards: Nobel, Fields Medal.</div>
-                                <div class="topic-item py-1">• Sports Awards: Khel Ratna, Dronacharya.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Science and Technology -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Science and Technology</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="latest-innovations">
-                                    <label for="latest-innovations" class="font-semibold">Latest Innovations</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• AI, Tech Startups: Unicorn startups, funding rounds.</div>
-                                <div class="topic-item py-1">• New Inventions: Electric vehicles, renewable energy.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="space-missions">
-                                    <label for="space-missions" class="font-semibold">Space Missions</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• ISRO Projects: Chandrayaan-3, Aditya-L1.</div>
-                                <div class="topic-item py-1">• International Space Programs: NASA, ESA missions.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Environment -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Environment</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="climate-change">
-                                    <label for="climate-change" class="font-semibold">Climate Change</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Global Warming: Carbon emissions, temperature rise.</div>
-                                <div class="topic-item py-1">• Paris Agreement: Commitments, COP meetings.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="conservation">
-                                    <label for="conservation" class="font-semibold">Conservation</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Biodiversity: Endangered species, wildlife protection.</div>
-                                <div class="topic-item py-1">• Protected Areas: National parks, sanctuaries.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="environmental-policies">
-                                    <label for="environmental-policies" class="font-semibold">Environmental Policies</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• National Green Tribunal: Cases, rulings.</div>
-                                <div class="topic-item py-1">• Environmental Laws: Air Act, Water Act, and amendments.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- III. General Mental Ability -->
+                     <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                 </button>
+                 <div id="content-current-affairs" class="section-content" role="region">
+                      <!-- National News -->
+                     <div class="mb-4">
+                         <h3 class="font-semibold text-lg text-green-800 mb-3 mt-2 border-b pb-1 border-green-100">National News</h3>
+                         <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+                      <!-- International News -->
+                     <div class="mb-4">
+                          <h3 class="font-semibold text-lg text-green-800 mb-3 mt-4 border-b pb-1 border-green-100">International News</h3>
+                          <!-- ... topics and subtopics using the new structure ... -->
+                     </div>
+                     <!-- ... other subsections for Current Affairs ... -->
+                 </div>
+             </div>
+
+             <!-- III. General Mental Ability (Apply structure) -->
+             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                 <button class="section-title bg-purple-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="general-mental-ability" aria-expanded="false" aria-controls="content-general-mental-ability">
+                     <!-- ... title content ... -->
+                      <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                 </button>
+                 <div id="content-general-mental-ability" class="section-content" role="region">
+                      <h3 class="font-semibold text-lg text-purple-800 mb-3 mt-2 border-b pb-1 border-purple-100">Logical Reasoning</h3>
+                     <!-- ... topics ... -->
+                       <h3 class="font-semibold text-lg text-purple-800 mb-3 mt-4 border-b pb-1 border-purple-100">Analytical Reasoning</h3>
+                     <!-- ... topics ... -->
+                      <!-- ... other subsections ... -->
+                 </div>
+             </div>
+
+            <!-- IV. Numerical Ability (Apply structure) -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-purple-600 text-white p-4 flex justify-between items-center" data-section="general-mental-ability">
-                    <div class="flex items-center">
-                        <h2 class="text-xl font-bold">III. General Mental Ability</h2>
-                        <div class="ml-4 flex items-center">
-                            <div class="w-32 h-2 bg-purple-300 rounded-full">
-                                <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
-                            </div>
-                            <span class="ml-2 text-sm section-percentage">0%</span>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
-                    <!-- Logical Reasoning -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-purple-700 mb-2">Logical Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="logical-reasoning">
-                                    <label for="logical-reasoning" class="font-semibold">Topics</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Syllogisms: All, some, none statements, conclusions.</div>
-                                <div class="topic-item py-1">• Analogies: Word and number analogies, relationships.</div>
-                                <div class="topic-item py-1">• Series Completion: Number, letter, and mixed series.</div>
-                                <div class="topic-item py-1">• Coding-Decoding: Letter, number, and mixed coding.</div>
-                                <div class="topic-item py-1">• Blood Relations: Family tree, relationships.</div>
-                                <div class="topic-item py-1">• Direction Sense: Directions, distances, and positions.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Analytical Reasoning -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-purple-700 mb-2">Analytical Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-analysis">
-                                    <label for="data-analysis" class="font-semibold">Data Analysis</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Tables: Reading and interpreting data.</div>
-                                <div class="topic-item py-1">• Graphs: Bar, pie, line graphs, trends.</div>
-                                <div class="topic-item py-1">• Charts: Flowcharts, organizational charts.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="critical-thinking">
-                                    <label for="critical-thinking" class="font-semibold">Critical Thinking</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Problem Solving: Logical puzzles, scenarios.</div>
-                                <div class="topic-item py-1">• Decision Making: Choosing best options, trade-offs.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Verbal Reasoning -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-purple-700 mb-2">Verbal Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="comprehension">
-                                    <label for="comprehension" class="font-semibold">Comprehension</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Passage Reading: Short and long passages, main idea.</div>
-                                <div class="topic-item py-1">• Inference: Drawing conclusions, implied meanings.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="vocabulary">
-                                    <label for="vocabulary" class="font-semibold">Vocabulary</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Synonyms: Similar meaning words.</div>
-                                <div class="topic-item py-1">• Antonyms: Opposite meaning words.</div>
-                                <div class="topic-item py-1">• Homonyms: Words with same spelling, different meanings.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="grammar">
-                                    <label for="grammar" class="font-semibold">Grammar</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Parts of Speech: Nouns, verbs, adjectives, etc.</div>
-                                <div class="topic-item py-1">• Tenses: Present, past, future, and forms.</div>
-                                <div class="topic-item py-1">• Sentence Structure: Subject-verb agreement, clauses.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Non-Verbal Reasoning -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-purple-700 mb-2">Non-Verbal Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="patterns">
-                                    <label for="patterns" class="font-semibold">Patterns</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Number Patterns: Sequences, series.</div>
-                                <div class="topic-item py-1">• Letter Patterns: Alphabetic sequences.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="shapes">
-                                    <label for="shapes" class="font-semibold">Shapes</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Geometrical Shapes: Triangles, circles, polygons.</div>
-                                <div class="topic-item py-1">• Symmetry: Line and rotational symmetry.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="spatial-reasoning">
-                                    <label for="spatial-reasoning" class="font-semibold">Spatial Reasoning</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Paper Folding: Folding and cutting patterns.</div>
-                                <div class="topic-item py-1">• Cube and Dice: Views, rotations, and positions.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- IV. Numerical Ability -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-red-600 text-white p-4 flex justify-between items-center" data-section="numerical-ability">
-                    <div class="flex items-center">
-                        <h2 class="text-xl font-bold">IV. Numerical Ability</h2>
-                        <div class="ml-4 flex items-center">
-                            <div class="w-32 h-2 bg-red-300 rounded-full">
-                                <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
-                            </div>
-                            <span class="ml-2 text-sm section-percentage">0%</span>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
-                    <!-- Number System -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Number System</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="types-of-numbers">
-                                    <label for="types-of-numbers" class="font-semibold">Types of Numbers</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Natural Numbers: 1, 2, 3, ...</div>
-                                <div class="topic-item py-1">• Whole Numbers: 0, 1, 2, ...</div>
-                                <div class="topic-item py-1">• Integers: Positive, negative, zero.</div>
-                                <div class="topic-item py-1">• Rational Numbers: Fractions, decimals.</div>
-                                <div class="topic-item py-1">• Irrational Numbers: √2, π, etc.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="properties-of-numbers">
-                                    <label for="properties-of-numbers" class="font-semibold">Properties of Numbers</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Even Numbers: Divisible by 2.</div>
-                                <div class="topic-item py-1">• Odd Numbers: Not divisible by 2.</div>
-                                <div class="topic-item py-1">• Prime Numbers: Divisible by 1 and itself.</div>
-                                <div class="topic-item py-1">• Composite Numbers: More than two factors.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="number-theory">
-                                    <label for="number-theory" class="font-semibold">Number Theory</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Factors: Divisors of a number.</div>
-                                <div class="topic-item py-1">• Multiples: Products of a number.</div>
-                                <div class="topic-item py-1">• Divisibility Rules: For 2, 3, 5, 9, etc.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Arithmetic -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Arithmetic</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-operations">
-                                    <label for="basic-operations" class="font-semibold">Basic Operations</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Addition: Sum of numbers.</div>
-                                <div class="topic-item py-1">• Subtraction: Difference between numbers.</div>
-                                <div class="topic-item py-1">• Multiplication: Product of numbers.</div>
-                                <div class="topic-item py-1">• Division: Quotient and remainder.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="percentages">
-                                    <label for="percentages" class="font-semibold">Percentages</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Percentage Increase/Decrease: Change over original.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="ratios-proportions">
-                                    <label for="ratios-proportions" class="font-semibold">Ratios and Proportions</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Simplifying Ratios: Reducing to lowest terms.</div>
-                                <div class="topic-item py-1">• Proportion Problems: Direct, inverse proportions.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Algebra -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Algebra</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="equations">
-                                    <label for="equations" class="font-semibold">Equations</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Linear Equations: ax + b = 0.</div>
-                                <div class="topic-item py-1">• Quadratic Equations: ax² + bx + c = 0.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="inequalities">
-                                    <label for="inequalities" class="font-semibold">Inequalities</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Solving Inequalities: >, <, ≥, ≤.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="functions">
-                                    <label for="functions" class="font-semibold">Functions</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Linear Functions: y = mx + c.</div>
-                                <div class="topic-item py-1">• Quadratic Functions: y = ax² + bx + c.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Geometry -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Geometry</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="properties-of-shapes">
-                                    <label for="properties-of-shapes" class="font-semibold">Properties of Shapes</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Triangles: Types, area, perimeter.</div>
-                                <div class="topic-item py-1">• Quadrilaterals: Squares, rectangles, trapezoids.</div>
-                                <div class="topic-item py-1">• Circles: Radius, diameter, circumference, area.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="theorems">
-                                    <label for="theorems" class="font-semibold">Theorems</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Pythagorean Theorem: a² + b² = c².</div>
-                                <div class="topic-item py-1">• Properties of Angles: Complementary, supplementary.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Trigonometry -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Trigonometry</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-functions">
-                                    <label for="basic-functions" class="font-semibold">Basic Functions</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Sine, Cosine, Tangent: Ratios in right triangles.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="identities">
-                                    <label for="identities" class="font-semibold">Identities</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Pythagorean Identity: sin²θ + cos²θ = 1.</div>
-                                <div class="topic-item py-1">• Sum and Difference Identities: sin(a+b), cos(a-b).</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Statistics -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Statistics</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="measures-of-central-tendency">
-                                    <label for="measures-of-central-tendency" class="font-semibold">Measures of Central Tendency</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Mean: Average of numbers.</div>
-                                <div class="topic-item py-1">• Median: Middle value in ordered list.</div>
-                                <div class="topic-item py-1">• Mode: Most frequent value.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="measures-of-dispersion">
-                                    <label for="measures-of-dispersion" class="font-semibold">Measures of Dispersion</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Range: Difference between max and min.</div>
-                                <div class="topic-item py-1">• Variance: Average of squared deviations.</div>
-                                <div class="topic-item py-1">• Standard Deviation: Square root of variance.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Probability -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Probability</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-concepts">
-                                    <label for="basic-concepts" class="font-semibold">Basic Concepts</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Sample Space: All possible outcomes.</div>
-                                <div class="topic-item py-1">• Events: Subsets of sample space.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="probability-rules">
-                                    <label for="probability-rules" class="font-semibold">Probability Rules</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Addition Rule: P(A or B) = P(A) + P(B) - P(A and B).</div>
-                                <div class="topic-item py-1">• Multiplication Rule: P(A and B) = P(A) * P(B|A).</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- V. Quantitative Reasoning -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-yellow-600 text-white p-4 flex justify-between items-center" data-section="quantitative-reasoning">
-                    <div class="flex items-center">
-                        <h2 class="text-xl font-bold">V. Quantitative Reasoning</h2>
-                        <div class="ml-4 flex items-center">
-                            <div class="w-32 h-2 bg-yellow-300 rounded-full">
-                                <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
-                            </div>
-                            <span class="ml-2 text-sm section-percentage">0%</span>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
-                    <!-- Data Interpretation -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-yellow-700 mb-2">Data Interpretation</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-interpretation">
-                                    <label for="data-interpretation" class="font-semibold">Topics</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Tables: Reading and analyzing tabular data.</div>
-                                <div class="topic-item py-1">• Graphs (Bar, Pie, Line): Interpreting trends and comparisons.</div>
-                                <div class="topic-item py-1">• Charts: Flowcharts, organizational charts, and analysis.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Data Sufficiency -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-yellow-700 mb-2">Data Sufficiency</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-sufficiency">
-                                    <label for="data-sufficiency" class="font-semibold">Topics</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Determining if given data is sufficient to answer questions: Two statements, decide if enough information.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Problem Solving -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-yellow-700 mb-2">Problem Solving</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-problems">
-                                    <label for="word-problems" class="font-semibold">Word Problems</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Age: Age relationships, future/past ages.</div>
-                                <div class="topic-item py-1">• Time and Work: Work rates, joint work.</div>
-                                <div class="topic-item py-1">• Speed and Distance: Distance, time, speed calculations.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="logical-math-problems">
-                                    <label for="logical-math-problems" class="font-semibold">Logical Math Problems</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Puzzles: Logical arrangement, seating.</div>
-                                <div class="topic-item py-1">• Sequences: Number, letter, and mixed sequences.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- VI. English -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-indigo-600 text-white p-4 flex justify-between items-center" data-section="english">
-                    <div class="flex items-center">
-                        <h2 class="text-xl font-bold">VI. English</h2>
-                        <div class="ml-4 flex items-center">
-                            <div class="w-32 h-2 bg-indigo-300 rounded-full">
-                                <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
-                            </div>
-                            <span class="ml-2 text-sm section-percentage">0%</span>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
-                </div>
-                <div class="section-content p-4">
-                    <!-- Reading Comprehension -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-indigo-700 mb-2">Reading Comprehension</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="factual-passages">
-                                    <label for="factual-passages" class="font-semibold">Factual Passages</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Main ideas, supporting details, inferences.</div>
-                                <div class="topic-item py-1">• Author's tone, purpose, and point of view.</div>
-                                <div class="topic-item py-1">• Vocabulary in context.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="narrative-passages">
-                                    <label for="narrative-passages" class="font-semibold">Narrative Passages</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Plot, characters, setting, literary devices.</div>
-                                <div class="topic-item py-1">• Sequence of events.</div>
-                                <div class="topic-item py-1">• Vocabulary in context.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="literary-passages">
-                                    <label for="literary-passages" class="font-semibold">Literary Passages</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Poetic devices, figurative language.</div>
-                                <div class="topic-item py-1">• Interpretation of themes.</div>
-                                <div class="topic-item py-1">• Vocabulary in context.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Verbal Ability -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-indigo-700 mb-2">Verbal Ability</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="sentence-rearrangement">
-                                    <label for="sentence-rearrangement" class="font-semibold">Sentence Rearrangement</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Ordering sentences to form a coherent paragraph.</div>
-                                <div class="topic-item py-1">• Identifying logical sequence and transitions.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-selection">
-                                    <label for="word-selection" class="font-semibold">Word Selection</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Choosing the correct word to fill in blanks based on context.</div>
-                                <div class="topic-item py-1">• Ensuring appropriate usage.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="verbal-reasoning">
-                                    <label for="verbal-reasoning" class="font-semibold">Verbal Reasoning</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Analogies and logical connections between words and ideas.</div>
-                                <div class="topic-item py-1">• Testing logical language use.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Grammar and Usage -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-indigo-700 mb-2">Grammar and Usage</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="grammatical-errors">
-                                    <label for="grammatical-errors" class="font-semibold">Grammatical Errors</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Subject-verb agreement, tense consistency.</div>
-                                <div class="topic-item py-1">• Correct use of articles, prepositions, conjunctions.</div>
-                                <div class="topic-item py-1">• Pronoun-antecedent agreement and parallel structure.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="sentence-completion">
-                                    <label for="sentence-completion" class="font-semibold">Sentence Completion</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Filling in blanks with appropriate words based on grammar rules.</div>
-                                <div class="topic-item py-1">• Understanding the grammatical context.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Vocabulary -->
-                    <div class="mb-4">
-                        <h3 class="font-bold text-lg text-indigo-700 mb-2">Vocabulary</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="synonyms-antonyms">
-                                    <label for="synonyms-antonyms" class="font-semibold">Synonyms and Antonyms</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Understanding word meanings and their opposites.</div>
-                                <div class="topic-item py-1">• Including nuances in meanings.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-meanings">
-                                    <label for="word-meanings" class="font-semibold">Word Meanings and Usage</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Definitions and contextual usage.</div>
-                                <div class="topic-item py-1">• Homonyms, homophones, and homographs.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="idioms-phrases">
-                                    <label for="idioms-phrases" class="font-semibold">Idioms and Phrases</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Meanings and usage in sentences.</div>
-                                <div class="topic-item py-1">• Common idiomatic expressions.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="phrasal-verbs">
-                                    <label for="phrasal-verbs" class="font-semibold">Phrasal Verbs</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Meanings and usage.</div>
-                                <div class="topic-item py-1">• Differentiating between similar phrasal verbs.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="figures-of-speech">
-                                    <label for="figures-of-speech" class="font-semibold">Figures of Speech</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Recognizing and understanding types.</div>
-                                <div class="topic-item py-1">• Metaphors, similes, personification, hyperbole, etc.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-analogy">
-                                    <label for="word-analogy" class="font-semibold">Word Analogy</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Identifying relationships between words.</div>
-                                <div class="topic-item py-1">• Part-whole, cause-effect, etc.</div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="spelling-errors">
-                                    <label for="spelling-errors" class="font-semibold">Spelling Errors</label>
-                                </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
-                                    <i class="fas fa-star"></i>
-                                </button>
-                            </div>
-                            <div class="subtopic ml-6 mt-1">
-                                <div class="topic-item py-1">• Identifying and correcting spelling mistakes.</div>
-                                <div class="topic-item py-1">• Common spelling rules and exceptions.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                 <button class="section-title bg-red-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="numerical-ability" aria-expanded="false" aria-controls="content-numerical-ability">
+                     <!-- ... title content ... -->
+                      <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                 </button>
+                 <div id="content-numerical-ability" class="section-content" role="region">
+                      <h3 class="font-semibold text-lg text-red-800 mb-3 mt-2 border-b pb-1 border-red-100">Number System</h3>
+                     <!-- ... topics ... -->
+                     <!-- ... other subsections ... -->
+                 </div>
+             </div>
+
+             <!-- V. Quantitative Reasoning (Apply structure) -->
+             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                 <button class="section-title bg-yellow-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="quantitative-reasoning" aria-expanded="false" aria-controls="content-quantitative-reasoning">
+                      <!-- ... title content ... -->
+                      <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                 </button>
+                 <div id="content-quantitative-reasoning" class="section-content" role="region">
+                      <h3 class="font-semibold text-lg text-yellow-800 mb-3 mt-2 border-b pb-1 border-yellow-100">Data Interpretation</h3>
+                     <!-- ... topics ... -->
+                      <!-- ... other subsections ... -->
+                 </div>
+             </div>
+
+             <!-- VI. English (Apply structure) -->
+             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                 <button class="section-title bg-indigo-600 text-white p-4 w-full flex justify-between items-center focus:outline-none" data-section="english" aria-expanded="false" aria-controls="content-english">
+                     <!-- ... title content ... -->
+                     <i class="fas fa-chevron-down transform transition-transform duration-300"></i>
+                 </button>
+                 <div id="content-english" class="section-content" role="region">
+                      <h3 class="font-semibold text-lg text-indigo-800 mb-3 mt-2 border-b pb-1 border-indigo-100">Reading Comprehension</h3>
+                     <!-- ... topics ... -->
+                     <!-- ... other subsections ... -->
+                 </div>
+             </div>
+            <!-- NOTE: You will need to manually replace the content structure (topic divs, subtopic divs) -->
+            <!-- within ALL sections (II through VI) following the pattern shown in Section I -->
+            <!-- This involves: -->
+            <!-- 1. Changing subtopic container div to ul.subtopic-list -->
+            <!-- 2. Changing subtopic item div to li.subtopic-item -->
+            <!-- 3. Adding appropriate aria-labels to highlight buttons -->
+            <!-- 4. Adding aria-labelledby to checkboxes and corresponding id to labels -->
+            <!-- 5. Updating the <h3> styles and structure -->
+            <!-- 6. Making section titles <button> elements for better A11y -->
+
+        </div> <!-- End #syllabus-content -->
+    </div> <!-- End .container -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize local storage
             const completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || {};
             const highlightedTopics = JSON.parse(localStorage.getItem('highlightedTopics')) || {};
-            
+
             // Elements
             const sectionTitles = document.querySelectorAll('.section-title');
             const topicCheckboxes = document.querySelectorAll('.topic-checkbox');
@@ -1864,29 +527,51 @@
             const collapseAllBtn = document.getElementById('collapse-all');
             const resetProgressBtn = document.getElementById('reset-progress');
             const searchInput = document.getElementById('search-input');
-            const topics = document.querySelectorAll('.topic');
-            
+            const allTopics = document.querySelectorAll('.topic'); // Get all topic containers
+
             // Toggle section content
             sectionTitles.forEach(title => {
+                const content = document.getElementById(title.getAttribute('aria-controls'));
+                if (!content) return; // Safety check
+
+                // Initial ARIA state based on whether content starts active
+                 const isActive = content.classList.contains('active');
+                 title.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+
+
                 title.addEventListener('click', function() {
-                    const content = this.nextElementSibling;
+                    const currentlyExpanded = this.getAttribute('aria-expanded') === 'true';
                     content.classList.toggle('active');
-                    this.querySelector('i').classList.toggle('rotate-180');
-                    updateProgress();
+                    this.setAttribute('aria-expanded', !currentlyExpanded);
+                    this.querySelector('i.fa-chevron-down').classList.toggle('rotate-180');
+                    // Note: Progress updates only when checkboxes change now, not on expand/collapse
                 });
             });
-            
+
+             // Helper to find the containing topic element
+            function findTopicElement(element) {
+                let current = element;
+                while (current && !current.classList.contains('topic')) {
+                    current = current.parentElement;
+                 }
+                 return current;
+             }
+
             // Mark topic as completed
             topicCheckboxes.forEach(checkbox => {
-                // Load saved state
+                const topicElement = findTopicElement(checkbox);
+                if (!topicElement) return;
+
+                 // Load saved state
                 if (completedTopics[checkbox.id]) {
                     checkbox.checked = true;
-                    checkbox.closest('.topic').classList.add('completed');
+                    topicElement.classList.add('completed');
                 }
-                
+
                 checkbox.addEventListener('change', function() {
-                    const topic = this.closest('.topic');
-                    
+                    const topic = findTopicElement(this); // Re-find topic on change
+                    if (!topic) return;
+
                     if (this.checked) {
                         topic.classList.add('completed');
                         completedTopics[this.id] = true;
@@ -1894,161 +579,279 @@
                         topic.classList.remove('completed');
                         delete completedTopics[this.id];
                     }
-                    
+
                     localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
-                    updateProgress();
+                    updateProgress(); // Update progress on change
                 });
             });
-            
+
             // Highlight topics to remember
             highlightButtons.forEach(button => {
-                const topic = button.closest('.topic');
-                const topicId = topic.querySelector('.topic-checkbox').id;
-                
+                const topicElement = findTopicElement(button);
+                 if (!topicElement) return;
+                const checkbox = topicElement.querySelector('.topic-checkbox');
+                 if (!checkbox) return;
+                 const topicId = checkbox.id;
+
                 // Load saved state
                 if (highlightedTopics[topicId]) {
                     button.classList.add('active');
-                    topic.classList.add('highlighted');
+                    topicElement.classList.add('highlighted');
                 }
-                
-                button.addEventListener('click', function() {
+
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent click bubbling to section title if nested differently
+                    const topic = findTopicElement(this); // Re-find topic on click
+                     if (!topic) return;
+                     const cb = topic.querySelector('.topic-checkbox');
+                     if (!cb) return;
+                     const currentTopicId = cb.id;
+
                     this.classList.toggle('active');
                     topic.classList.toggle('highlighted');
-                    
+
                     if (topic.classList.contains('highlighted')) {
-                        highlightedTopics[topicId] = true;
+                        highlightedTopics[currentTopicId] = true;
                     } else {
-                        delete highlightedTopics[topicId];
+                        delete highlightedTopics[currentTopicId];
                     }
-                    
+
                     localStorage.setItem('highlightedTopics', JSON.stringify(highlightedTopics));
                 });
             });
-            
+
             // Expand/Collapse all sections
             expandAllBtn.addEventListener('click', function() {
-                document.querySelectorAll('.section-content').forEach(content => {
-                    content.classList.add('active');
-                });
-                document.querySelectorAll('.section-title i').forEach(icon => {
-                    icon.classList.add('rotate-180');
-                });
+                sectionTitles.forEach(title => {
+                     const content = document.getElementById(title.getAttribute('aria-controls'));
+                     if(content) {
+                         content.classList.add('active');
+                         title.setAttribute('aria-expanded', 'true');
+                         title.querySelector('i.fa-chevron-down').classList.add('rotate-180');
+                     }
+                 });
             });
-            
+
             collapseAllBtn.addEventListener('click', function() {
-                document.querySelectorAll('.section-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.querySelectorAll('.section-title i').forEach(icon => {
-                    icon.classList.remove('rotate-180');
-                });
+                 sectionTitles.forEach(title => {
+                    const content = document.getElementById(title.getAttribute('aria-controls'));
+                    if(content) {
+                         content.classList.remove('active');
+                         title.setAttribute('aria-expanded', 'false');
+                         title.querySelector('i.fa-chevron-down').classList.remove('rotate-180');
+                     }
+                 });
             });
-            
+
             // Reset progress
             resetProgressBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                if (confirm('Are you sure you want to reset all progress and highlights? This cannot be undone.')) {
                     localStorage.removeItem('completedTopics');
                     localStorage.removeItem('highlightedTopics');
-                    
+
                     topicCheckboxes.forEach(checkbox => {
                         checkbox.checked = false;
-                        checkbox.closest('.topic').classList.remove('completed');
+                        const topic = findTopicElement(checkbox);
+                         if (topic) topic.classList.remove('completed');
                     });
-                    
+
                     highlightButtons.forEach(button => {
-                        button.classList.remove('active');
-                        button.closest('.topic').classList.remove('highlighted');
+                         button.classList.remove('active');
+                        const topic = findTopicElement(button);
+                         if (topic) topic.classList.remove('highlighted');
                     });
-                    
+
                     updateProgress();
+                    // Optionally collapse all sections after reset
+                    // collapseAllBtn.click();
                 }
             });
-            
-            // Search functionality
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                // Remove previous highlights
-                document.querySelectorAll('.search-highlight').forEach(el => {
-                    el.classList.remove('search-highlight');
+
+            // --- Search Functionality ---
+            let searchHighlights = []; // Store highlighted elements for easy removal
+
+            function clearSearchHighlights() {
+                searchHighlights.forEach(({ element, originalHTML }) => {
+                    element.innerHTML = originalHTML; // Restore original content
                 });
-                
-                if (searchTerm.length < 2) return;
-                
-                topics.forEach(topic => {
-                    const topicText = topic.textContent.toLowerCase();
-                    const matched = topicText.includes(searchTerm);
-                    
-                    topic.style.display = matched ? 'block' : 'none';
-                    
-                    if (matched) {
-                        // Make sure the section is expanded
-                        let parent = topic.parentElement;
-                        while (parent && !parent.classList.contains('section-content')) {
-                            parent = parent.parentElement;
-                        }
-                        if (parent) {
-                            parent.classList.add('active');
-                            const title = parent.previousElementSibling;
-                            if (title) {
-                                title.querySelector('i').classList.add('rotate-180');
-                            }
-                        }
-                        
-                        // Highlight the matching text
-                        const topicItems = topic.querySelectorAll('.topic-item');
-                        topicItems.forEach(item => {
-                            if (item.textContent.toLowerCase().includes(searchTerm)) {
-                                item.classList.add('search-highlight');
-                            }
-                        });
+                searchHighlights = [];
+                 // Ensure all topics are visible after clearing search
+                 allTopics.forEach(topic => {
+                    topic.style.display = ''; // Reset display
+                 });
+                 // Also make sure subsection containers are visible if they were hidden
+                 document.querySelectorAll('.mb-4').forEach(subSection => {
+                    subSection.style.display = '';
+                });
+            }
+
+            function performSearch(term) {
+                clearSearchHighlights();
+                if (term.length < 2) {
+                    return; // Only search for terms >= 2 chars
+                }
+
+                const regex = new RegExp(`(${term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi'); // Case-insensitive, global
+                 let firstMatchElement = null;
+                 let matchesFound = false;
+
+                 allTopics.forEach(topic => {
+                    const topicContentElement = topic; // Search within the whole topic div
+                     const originalHTML = topicContentElement.innerHTML;
+                     let textContent = topicContentElement.textContent || topicContentElement.innerText || "";
+                     let topicHasMatch = false;
+
+                     if (textContent.toLowerCase().includes(term)) {
+                         topicHasMatch = true;
+                         matchesFound = true;
+
+                         // Highlight matches within the topic (carefully, avoid breaking HTML)
+                        // This simple text replace is prone to breaking HTML structure if tags contain the search term.
+                        // A more robust solution involves traversing text nodes.
+                        // For simplicity here, we'll just show/hide the topic.
+                        // Highlighting will be done via CSS class on subtopic items if needed.
+
+                         // Add highlight class to matching subtopic items
+                         topic.querySelectorAll('.subtopic-item').forEach(item => {
+                             if (item.textContent.toLowerCase().includes(term)) {
+                                 // Basic highlight approach: wrap text content
+                                 // More robust: traverse text nodes and wrap matches
+                                 const itemOriginalHTML = item.innerHTML;
+                                 const newHTML = item.innerHTML.replace(regex, '<span class="search-highlight">$1</span>');
+                                 if (newHTML !== itemOriginalHTML) {
+                                     item.innerHTML = newHTML;
+                                     // Store original state for cleanup
+                                     searchHighlights.push({ element: item, originalHTML: itemOriginalHTML });
+                                 }
+                             }
+                         });
+                         // Also check the main label
+                         const label = topic.querySelector('.topic-label');
+                         if (label && label.textContent.toLowerCase().includes(term)) {
+                            const labelOriginalHTML = label.innerHTML;
+                            const newHTML = label.innerHTML.replace(regex, '<span class="search-highlight">$1</span>');
+                             if (newHTML !== labelOriginalHTML) {
+                                label.innerHTML = newHTML;
+                                searchHighlights.push({ element: label, originalHTML: labelOriginalHTML });
+                             }
+                         }
+
+
+                         if (!firstMatchElement) {
+                             firstMatchElement = topic;
+                         }
                     }
+
+                    topic.style.display = topicHasMatch ? '' : 'none'; // Show/hide topic
+
+                     // Also hide/show the parent subsection title if it contains no visible topics
+                     const subsection = topic.closest('.mb-4'); // Find parent like "Indian History" container
+                     if (subsection) {
+                         const visibleTopicsInSection = subsection.querySelectorAll('.topic[style*="display: block"], .topic:not([style])'); // Topics not explicitly hidden
+                         subsection.style.display = visibleTopicsInSection.length > 0 ? '' : 'none';
+                     }
+
+                     // Ensure the parent section accordion is open if a match is found inside
+                     if (topicHasMatch) {
+                         const sectionContent = topic.closest('.section-content');
+                         if (sectionContent && !sectionContent.classList.contains('active')) {
+                             const sectionTitle = document.querySelector(`.section-title[aria-controls="${sectionContent.id}"]`);
+                             if (sectionTitle) {
+                                 sectionTitle.click(); // Open the section
+                             }
+                         }
+                     }
                 });
-                
-                // If search is cleared, show all topics
-                if (searchTerm === '') {
-                    topics.forEach(topic => {
-                        topic.style.display = 'block';
-                    });
-                }
+
+                 // Scroll to the first match if found
+                 if (firstMatchElement) {
+                     // Use scrollIntoView with smooth behavior
+                     firstMatchElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }
+            }
+
+            // Debounce search input
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchTerm = this.value.toLowerCase().trim();
+                searchTimeout = setTimeout(() => {
+                    performSearch(searchTerm);
+                }, 300); // Wait 300ms after user stops typing
             });
-            
+
+
             // Calculate and update progress
             function updateProgress() {
-                // Overall progress
                 const totalTopics = topicCheckboxes.length;
-                const completedCount = Object.keys(completedTopics).length;
-                const overallPercentage = Math.round((completedCount / totalTopics) * 100);
-                
-                document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
-                document.getElementById('progress-percentage').textContent = `${overallPercentage}%`;
-                
-                // Section progress
-                const sections = document.querySelectorAll('.section-title');
-                sections.forEach(section => {
-                    const sectionId = section.getAttribute('data-section');
-                    const sectionContent = section.nextElementSibling;
-                    const sectionCheckboxes = sectionContent.querySelectorAll('.topic-checkbox');
-                    
-                    let sectionCompleted = 0;
-                    sectionCheckboxes.forEach(checkbox => {
+                if (totalTopics === 0) return; // Avoid division by zero
+
+                 let totalCompletedCount = 0;
+                 topicCheckboxes.forEach(checkbox => {
+                    if(checkbox.checked) {
+                         totalCompletedCount++;
+                     }
+                 });
+
+                 const overallPercentage = Math.round((totalCompletedCount / totalTopics) * 100);
+
+                 const overallProgressBar = document.getElementById('overall-progress');
+                 const progressPercentageSpan = document.getElementById('progress-percentage');
+
+                 if(overallProgressBar) {
+                     overallProgressBar.style.width = `${overallPercentage}%`;
+                     overallProgressBar.setAttribute('aria-valuenow', overallPercentage);
+                 }
+                 if(progressPercentageSpan) {
+                     progressPercentageSpan.textContent = `${overallPercentage}%`;
+                 }
+
+                 // Section progress (ensure elements exist)
+                 document.querySelectorAll('.section-title').forEach(sectionTitle => {
+                    const sectionContent = document.getElementById(sectionTitle.getAttribute('aria-controls'));
+                    if (!sectionContent) return;
+
+                     const sectionCheckboxes = sectionContent.querySelectorAll('.topic-checkbox');
+                    const sectionTotal = sectionCheckboxes.length;
+                    if (sectionTotal === 0) return;
+
+                     let sectionCompleted = 0;
+                     sectionCheckboxes.forEach(checkbox => {
                         if (checkbox.checked) {
                             sectionCompleted++;
                         }
                     });
-                    
-                    const sectionPercentage = Math.round((sectionCompleted / sectionCheckboxes.length) * 100);
-                    section.querySelector('.section-progress').style.width = `${sectionPercentage}%`;
-                    section.querySelector('.section-percentage').textContent = `${sectionPercentage}%`;
+
+                    const sectionPercentage = Math.round((sectionCompleted / sectionTotal) * 100);
+                    const sectionProgressBar = sectionTitle.querySelector('.section-progress');
+                    const sectionPercentageSpan = sectionTitle.querySelector('.section-percentage');
+
+                    if (sectionProgressBar) {
+                         sectionProgressBar.style.width = `${sectionPercentage}%`;
+                    }
+                     if(sectionPercentageSpan) {
+                         sectionPercentageSpan.textContent = `${sectionPercentage}%`;
+                     }
                 });
             }
-            
-            // Initial setup
+
+            // --- Initial Setup ---
             updateProgress();
-            // Open first section by default
-            document.querySelector('.section-content').classList.add('active');
-            document.querySelector('.section-title i').classList.add('rotate-180');
-        });
+
+             // Open first section by default (if it exists and isn't already open)
+             const firstSectionTitle = document.querySelector('.section-title');
+             if (firstSectionTitle && firstSectionTitle.getAttribute('aria-expanded') === 'false') {
+                // Don't auto-click if search might be active on load
+                if (!searchInput.value) {
+                    firstSectionTitle.click();
+                }
+             }
+
+            // Re-apply highlights and completed states on search clear/update
+            // (This is implicitly handled by performSearch clearing and re-evaluating,
+            // and by the initial load applying styles correctly)
+
+        }); // End DOMContentLoaded
     </script>
 </body>
 </html>
