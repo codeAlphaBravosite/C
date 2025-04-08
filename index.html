@@ -252,6 +252,41 @@
                  opacity: 0.7;
              }
         }
+
+                /* Add these rules to explicitly style the section title button */
+        button.section-title {
+            background-color: #334155; /* Hex code for Tailwind's slate-700 */
+            color: #ffffff; /* Hex code for white */
+            display: flex; /* Ensure flex layout is applied */
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 1rem; /* Ensure padding is applied (matches p-4) */
+            border: none; /* Remove default button border */
+            text-align: left; /* Align text inside button if needed */
+            font-family: inherit; /* Use body font */
+            font-size: inherit; /* Use body font size unless overridden */
+        }
+
+        button.section-title h2 {
+            color: inherit; /* Ensure h2 inherits the button's white text color */
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* semibold */
+            margin: 0; /* Reset any default h2 margins */
+        }
+
+        /* Ensure the icon inside is also white */
+         button.section-title i {
+             color: #ffffff;
+         }
+
+        /* Optional: Explicitly style the progress bars inside if they also vanished */
+        button.section-title .section-progress {
+             background-color: #ffffff; /* White fill */
+         }
+         button.section-title .section-percentage {
+             color: #ffffff; /* White text for percentage */
+        }
     </style>
 </head>
 <body class="bg-gray-100">
