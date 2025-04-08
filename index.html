@@ -21,7 +21,7 @@
             transition: max-height 0.5s ease;
         }
         .section-content.active {
-            max-height: 10000px;
+            max-height: 10000px; /* Ensure this is large enough */
         }
         .progress-bar {
             height: 8px;
@@ -35,12 +35,12 @@
             background-color: rgba(243, 244, 246, 0.8);
         }
         .topic.highlighted {
-            border-left-color: #FCD34D;
+            border-left-color: #FCD34D; /* Tailwind amber-400 */
             background-color: rgba(252, 211, 77, 0.1);
         }
         .topic.completed {
             text-decoration: line-through;
-            color: #6B7280;
+            color: #6B7280; /* Tailwind gray-500 */
         }
         .topic.completed.highlighted {
             text-decoration: line-through;
@@ -61,15 +61,16 @@
             -webkit-appearance: none;
             width: 18px;
             height: 18px;
-            border: 2px solid #CBD5E0;
+            border: 2px solid #CBD5E0; /* Tailwind gray-300 */
             border-radius: 4px;
             margin-right: 8px;
             position: relative;
             top: 4px;
             cursor: pointer;
+            flex-shrink: 0; /* Prevent checkbox from shrinking */
         }
         .custom-checkbox:checked {
-            background-color: #4F46E5;
+            background-color: #4F46E5; /* Tailwind indigo-600 */
             border-color: #4F46E5;
         }
         .custom-checkbox:checked::after {
@@ -88,7 +89,8 @@
             opacity: 1;
         }
         .search-highlight {
-            background-color: #FEF3C7;
+            background-color: #FEF3C7; /* Tailwind amber-100 */
+            font-weight: bold;
         }
         @media print {
             .no-print {
@@ -98,67 +100,77 @@
                 max-height: none !important;
                 overflow: visible !important;
             }
+            .sticky {
+                position: static !important; /* Prevent sticky header in print */
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <div class="sticky top-0 z-10 bg-white rounded-lg shadow-md p-6 mb-6 no-print">
-            <h1 class="text-3xl font-bold text-center text-indigo-700 mb-2">CUET Examination Syllabus Tracker</h1>
-            <p class="text-gray-600 text-center mb-4">Track your progress by marking topics as completed and highlighting important areas to remember</p>
-            
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center">
-                    <span class="text-gray-700 mr-2">Overall Progress:</span>
-                    <div class="w-48 h-2 bg-gray-200 rounded-full">
+
+        <!-- === MODIFIED STICKY HEADER SECTION === -->
+        <div class="sticky top-0 z-10 bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 no-print">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-indigo-700 mb-2">CUET Examination Syllabus Tracker</h1>
+            <p class="text-gray-600 text-center text-sm sm:text-base mb-4">Track your progress by marking topics as completed and highlighting important areas</p>
+
+            <!-- Responsive Flex Container for Progress and Buttons -->
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-4 sm:space-y-0">
+
+                <!-- Progress Bar Section -->
+                <div class="flex items-center w-full sm:w-auto">
+                    <span class="text-gray-700 mr-2 text-sm shrink-0">Overall Progress:</span>
+                    <div class="flex-grow h-2 bg-gray-200 rounded-full mx-2">
                         <div id="overall-progress" class="progress-bar bg-green-500 rounded-full" style="width: 0%"></div>
                     </div>
-                    <span id="progress-percentage" class="ml-2 text-sm text-gray-600">0%</span>
+                    <span id="progress-percentage" class="ml-auto sm:ml-2 text-sm text-gray-600 shrink-0">0%</span>
                 </div>
-                <!--
-                <div class="flex space-x-2">
-                    <button id="expand-all" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-sm">Expand All</button>
-                    <button id="collapse-all" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-sm">Collapse All</button>
-                    <button id="reset-progress" class="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-sm">Reset Progress</button>                
+
+                <!-- Button Section -->
+                <div class="flex space-x-2 self-center sm:self-auto justify-center sm:justify-end flex-wrap gap-y-2"> <!-- Added flex-wrap and gap-y-2 for very small screens if needed -->
+                    <button id="expand-all" class="px-2 sm:px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-xs sm:text-sm whitespace-nowrap">Expand All</button>
+                    <button id="collapse-all" class="px-2 sm:px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 text-xs sm:text-sm whitespace-nowrap">Collapse All</button>
+                    <button id="reset-progress" class="px-2 sm:px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-xs sm:text-sm whitespace-nowrap">Reset</button>
                 </div>
-                -->
             </div>
-            
+            <!-- End Responsive Flex Container -->
+
             <div class="relative">
-                <input type="text" id="search-input" placeholder="Search topics..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <span class="absolute right-3 top-2 text-gray-400">
+                <input type="text" id="search-input" placeholder="Search topics..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm sm:text-base">
+                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <i class="fas fa-search"></i>
                 </span>
             </div>
         </div>
+        <!-- === END MODIFIED STICKY HEADER SECTION === -->
+
 
         <div id="syllabus-content">
             <!-- I. General Knowledge -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
                 <div class="section-title bg-blue-600 text-white p-4 flex justify-between items-center" data-section="general-knowledge">
-                    <div class="flex items-center">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1"> <!-- Added flex-wrap and gap -->
                         <h2 class="text-xl font-bold">I. General Knowledge</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-blue-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i> <!-- Added ml-2 and shrink-0 -->
                 </div>
                 <div class="section-content p-4">
                     <!-- Indian History -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Indian History</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="ancient-india">
-                                    <label for="ancient-india" class="font-semibold">Ancient India (3000 BC - 1200 AD)</label>
+                            <div class="flex justify-between items-start"> <!-- Changed items-center to items-start -->
+                                <div class="flex items-start mr-2"> <!-- Wrap label and checkbox -->
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="ancient-india"> <!-- Added mt-1 for alignment -->
+                                    <label for="ancient-india" class="font-semibold flex-1">Ancient India (3000 BC - 1200 AD)</label> <!-- Added flex-1 -->
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember"> <!-- Added shrink-0 -->
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -169,14 +181,13 @@
                                 <div class="topic-item py-1">• Gupta Empire: Golden Age, art, and science.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="medieval-india">
-                                    <label for="medieval-india" class="font-semibold">Medieval India (1200 - 1707 AD)</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="medieval-india">
+                                    <label for="medieval-india" class="font-semibold flex-1">Medieval India (1200 - 1707 AD)</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -186,14 +197,13 @@
                                 <div class="topic-item py-1">• Rajputs: Kingdoms, culture, and resistance.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="modern-india">
-                                    <label for="modern-india" class="font-semibold">Modern India (1707 AD - Present)</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="modern-india">
+                                    <label for="modern-india" class="font-semibold flex-1">Modern India (1707 AD - Present)</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -204,18 +214,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Geography -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Geography</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="physical-geography">
-                                    <label for="physical-geography" class="font-semibold">Physical Geography</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="physical-geography">
+                                    <label for="physical-geography" class="font-semibold flex-1">Physical Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -228,14 +236,13 @@
                                 <div class="topic-item py-1">• Natural Resources: Minerals, forests, and water resources.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="economic-geography">
-                                    <label for="economic-geography" class="font-semibold">Economic Geography</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="economic-geography">
+                                    <label for="economic-geography" class="font-semibold flex-1">Economic Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -246,14 +253,13 @@
                                 <div class="topic-item py-1">• Transportation: Railways, roads, and ports.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="political-geography">
-                                    <label for="political-geography" class="font-semibold">Political Geography</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="political-geography">
+                                    <label for="political-geography" class="font-semibold flex-1">Political Geography</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -264,18 +270,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Economy -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Economy</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-economic-concepts">
-                                    <label for="basic-economic-concepts" class="font-semibold">Basic Economic Concepts</label>
+                         <div class="topic p-2 rounded">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="basic-economic-concepts">
+                                    <label for="basic-economic-concepts" class="font-semibold flex-1">Basic Economic Concepts</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -285,14 +289,13 @@
                                 <div class="topic-item py-1">• Economic Indicators: GDP, inflation, unemployment rates.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="indian-economy">
-                                    <label for="indian-economy" class="font-semibold">Indian Economy</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="indian-economy">
+                                    <label for="indian-economy" class="font-semibold flex-1">Indian Economy</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -304,14 +307,13 @@
                                 <div class="topic-item py-1">• Services: IT, tourism, and service sector contribution.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="global-economy">
-                                    <label for="global-economy" class="font-semibold">Global Economy</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="global-economy">
+                                    <label for="global-economy" class="font-semibold flex-1">Global Economy</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -323,18 +325,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Polity -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Polity</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="indian-constitution">
-                                    <label for="indian-constitution" class="font-semibold">Indian Constitution</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="indian-constitution">
+                                    <label for="indian-constitution" class="font-semibold flex-1">Indian Constitution</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -345,14 +345,13 @@
                                 <div class="topic-item py-1">• Directive Principles: Social, economic, and political directives.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="political-system">
-                                    <label for="political-system" class="font-semibold">Political System</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="political-system">
+                                    <label for="political-system" class="font-semibold flex-1">Political System</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -362,14 +361,13 @@
                                 <div class="topic-item py-1">• Local Self-Governments: Panchayats, municipalities, and 73rd/74th amendments.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="governance">
-                                    <label for="governance" class="font-semibold">Governance</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="governance">
+                                    <label for="governance" class="font-semibold flex-1">Governance</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -380,18 +378,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Culture -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Culture</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="art">
-                                    <label for="art" class="font-semibold">Art</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="art">
+                                    <label for="art" class="font-semibold flex-1">Art</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -400,14 +396,13 @@
                                 <div class="topic-item py-1">• Sculptures: Mauryan, Gupta, and contemporary.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="literature">
-                                    <label for="literature" class="font-semibold">Literature</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="literature">
+                                    <label for="literature" class="font-semibold flex-1">Literature</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -416,14 +411,13 @@
                                 <div class="topic-item py-1">• Modern: Tagore, Premchand, and contemporary writers.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="music">
-                                    <label for="music" class="font-semibold">Music</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="music">
+                                    <label for="music" class="font-semibold flex-1">Music</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -432,14 +426,13 @@
                                 <div class="topic-item py-1">• Folk: Regional folk music and instruments.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="dance">
-                                    <label for="dance" class="font-semibold">Dance</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="dance">
+                                    <label for="dance" class="font-semibold flex-1">Dance</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -448,14 +441,13 @@
                                 <div class="topic-item py-1">• Folk: Bhangra, Garba, and regional dances.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="festivals">
-                                    <label for="festivals" class="font-semibold">Festivals</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="festivals">
+                                    <label for="festivals" class="font-semibold flex-1">Festivals</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -465,18 +457,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Sports -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Sports</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="important-events">
-                                    <label for="important-events" class="font-semibold">Important Events</label>
+                         <div class="topic p-2 rounded">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="important-events">
+                                    <label for="important-events" class="font-semibold flex-1">Important Events</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -486,14 +476,13 @@
                                 <div class="topic-item py-1">• Asian Games: History, events, and India's performance.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="players">
-                                    <label for="players" class="font-semibold">Players</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="players">
+                                    <label for="players" class="font-semibold flex-1">Players</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -502,14 +491,13 @@
                                 <div class="topic-item py-1">• Records: World records, Olympic records, and achievements.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="awards-sports">
-                                    <label for="awards-sports" class="font-semibold">Awards</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="awards-sports">
+                                    <label for="awards-sports" class="font-semibold flex-1">Awards</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -519,18 +507,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Awards and Honours -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Awards and Honours</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-awards">
-                                    <label for="national-awards" class="font-semibold">National Awards</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="national-awards">
+                                    <label for="national-awards" class="font-semibold flex-1">National Awards</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -540,14 +526,13 @@
                                 <div class="topic-item py-1">• Gallantry Awards: Param Vir Chakra, Ashok Chakra, etc.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-awards">
-                                    <label for="international-awards" class="font-semibold">International Awards</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="international-awards">
+                                    <label for="international-awards" class="font-semibold flex-1">International Awards</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -558,18 +543,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Important Days -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-blue-700 mb-2">Important Days</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-days">
-                                    <label for="national-days" class="font-semibold">National Days</label>
+                         <h3 class="font-bold text-lg text-blue-700 mb-2">Important Days</h3>
+                         <div class="topic p-2 rounded">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="national-days">
+                                    <label for="national-days" class="font-semibold flex-1">National Days</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -579,14 +562,13 @@
                                 <div class="topic-item py-1">• Gandhi Jayanti: October 2, birth anniversary, and legacy.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-days">
-                                    <label for="international-days" class="font-semibold">International Days</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="international-days">
+                                    <label for="international-days" class="font-semibold flex-1">International Days</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -597,18 +579,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Books and Authors -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Books and Authors</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="fiction">
-                                    <label for="fiction" class="font-semibold">Fiction</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="fiction">
+                                    <label for="fiction" class="font-semibold flex-1">Fiction</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -617,14 +597,13 @@
                                 <div class="topic-item py-1">• Short Stories: "The Guide" by R.K. Narayan.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="non-fiction">
-                                    <label for="non-fiction" class="font-semibold">Non-Fiction</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="non-fiction">
+                                    <label for="non-fiction" class="font-semibold flex-1">Non-Fiction</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -635,18 +614,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Science and Technology -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">Science and Technology</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="recent-developments">
-                                    <label for="recent-developments" class="font-semibold">Recent Developments</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="recent-developments">
+                                    <label for="recent-developments" class="font-semibold flex-1">Recent Developments</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -656,14 +633,13 @@
                                 <div class="topic-item py-1">• Information Technology: AI, blockchain, and cybersecurity.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="important-discoveries">
-                                    <label for="important-discoveries" class="font-semibold">Important Discoveries</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="important-discoveries">
+                                    <label for="important-discoveries" class="font-semibold flex-1">Important Discoveries</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -671,14 +647,13 @@
                                 <div class="topic-item py-1">• Scientific Breakthroughs: COVID-19 vaccines, quantum computing.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="scientists">
-                                    <label for="scientists" class="font-semibold">Scientists</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="scientists">
+                                    <label for="scientists" class="font-semibold flex-1">Scientists</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -689,34 +664,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div> <!-- End Section I -->
+
             <!-- II. Current Affairs -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-green-600 text-white p-4 flex justify-between items-center" data-section="current-affairs">
-                    <div class="flex items-center">
+                 <div class="section-title bg-green-600 text-white p-4 flex justify-between items-center" data-section="current-affairs">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1">
                         <h2 class="text-xl font-bold">II. Current Affairs</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-green-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i>
                 </div>
                 <div class="section-content p-4">
                     <!-- National News -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">National News</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="national-news">
-                                    <label for="national-news" class="font-semibold">Key Areas</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="national-news">
+                                    <label for="national-news" class="font-semibold flex-1">Key Areas</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -728,18 +702,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- International News -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">International News</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="international-news">
-                                    <label for="international-news" class="font-semibold">Key Areas</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="international-news">
+                                    <label for="international-news" class="font-semibold flex-1">Key Areas</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -751,18 +723,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Economy -->
+                     <!-- Economy (Current Affairs) -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-green-700 mb-2">Economy</h3>
-                        
+                         <h3 class="font-bold text-lg text-green-700 mb-2">Economy</h3>
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="economic-indicators">
-                                    <label for="economic-indicators" class="font-semibold">Economic Indicators</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="economic-indicators-ca"> <!-- Added -ca suffix for unique ID -->
+                                    <label for="economic-indicators-ca" class="font-semibold flex-1">Economic Indicators</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -772,14 +742,13 @@
                                 <div class="topic-item py-1">• Fiscal Policies: Government spending, taxation.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="budget">
-                                    <label for="budget" class="font-semibold">Budget</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="budget-ca">
+                                    <label for="budget-ca" class="font-semibold flex-1">Budget</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -788,14 +757,13 @@
                                 <div class="topic-item py-1">• State Budgets: State-specific economic plans.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="trade">
-                                    <label for="trade" class="font-semibold">Trade</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="trade-ca">
+                                    <label for="trade-ca" class="font-semibold flex-1">Trade</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -805,18 +773,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Sports -->
+                    <!-- Sports (Current Affairs) -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">Sports</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="recent-events">
-                                    <label for="recent-events" class="font-semibold">Recent Events</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="recent-events-ca">
+                                    <label for="recent-events-ca" class="font-semibold flex-1">Recent Events</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -824,14 +790,13 @@
                                 <div class="topic-item py-1">• National and International Tournaments: IPL, FIFA World Cup.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="achievements">
-                                    <label for="achievements" class="font-semibold">Achievements</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="achievements-ca">
+                                    <label for="achievements-ca" class="font-semibold flex-1">Achievements</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -841,18 +806,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Awards and Honours -->
+                    <!-- Awards and Honours (Current Affairs) -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">Awards and Honours</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="current-awards">
-                                    <label for="current-awards" class="font-semibold">Recent Awards</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="current-awards-ca">
+                                    <label for="current-awards-ca" class="font-semibold flex-1">Recent Awards</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -864,18 +827,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Science and Technology -->
+                    <!-- Science and Technology (Current Affairs) -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">Science and Technology</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="latest-innovations">
-                                    <label for="latest-innovations" class="font-semibold">Latest Innovations</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="latest-innovations-ca">
+                                    <label for="latest-innovations-ca" class="font-semibold flex-1">Latest Innovations</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -884,14 +845,13 @@
                                 <div class="topic-item py-1">• New Inventions: Electric vehicles, renewable energy.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="space-missions">
-                                    <label for="space-missions" class="font-semibold">Space Missions</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="space-missions-ca">
+                                    <label for="space-missions-ca" class="font-semibold flex-1">Space Missions</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -901,18 +861,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Environment -->
+                     <!-- Environment (Current Affairs) -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-green-700 mb-2">Environment</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="climate-change">
-                                    <label for="climate-change" class="font-semibold">Climate Change</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="climate-change-ca">
+                                    <label for="climate-change-ca" class="font-semibold flex-1">Climate Change</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -921,14 +879,13 @@
                                 <div class="topic-item py-1">• Paris Agreement: Commitments, COP meetings.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="conservation">
-                                    <label for="conservation" class="font-semibold">Conservation</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="conservation-ca">
+                                    <label for="conservation-ca" class="font-semibold flex-1">Conservation</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -937,14 +894,13 @@
                                 <div class="topic-item py-1">• Protected Areas: National parks, sanctuaries.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="environmental-policies">
-                                    <label for="environmental-policies" class="font-semibold">Environmental Policies</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="environmental-policies-ca">
+                                    <label for="environmental-policies-ca" class="font-semibold flex-1">Environmental Policies</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -955,34 +911,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div> <!-- End Section II -->
+
             <!-- III. General Mental Ability -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-purple-600 text-white p-4 flex justify-between items-center" data-section="general-mental-ability">
-                    <div class="flex items-center">
+                 <div class="section-title bg-purple-600 text-white p-4 flex justify-between items-center" data-section="general-mental-ability">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1">
                         <h2 class="text-xl font-bold">III. General Mental Ability</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-purple-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i>
                 </div>
                 <div class="section-content p-4">
                     <!-- Logical Reasoning -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-purple-700 mb-2">Logical Reasoning</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="logical-reasoning">
-                                    <label for="logical-reasoning" class="font-semibold">Topics</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="logical-reasoning">
+                                    <label for="logical-reasoning" class="font-semibold flex-1">Topics</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -996,18 +951,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Analytical Reasoning -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-purple-700 mb-2">Analytical Reasoning</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-analysis">
-                                    <label for="data-analysis" class="font-semibold">Data Analysis</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="data-analysis">
+                                    <label for="data-analysis" class="font-semibold flex-1">Data Analysis</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1017,14 +970,13 @@
                                 <div class="topic-item py-1">• Charts: Flowcharts, organizational charts.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="critical-thinking">
-                                    <label for="critical-thinking" class="font-semibold">Critical Thinking</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="critical-thinking">
+                                    <label for="critical-thinking" class="font-semibold flex-1">Critical Thinking</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1034,18 +986,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Verbal Reasoning -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-purple-700 mb-2">Verbal Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="comprehension">
-                                    <label for="comprehension" class="font-semibold">Comprehension</label>
+                         <div class="topic p-2 rounded">
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="comprehension">
+                                    <label for="comprehension" class="font-semibold flex-1">Comprehension</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1054,14 +1004,13 @@
                                 <div class="topic-item py-1">• Inference: Drawing conclusions, implied meanings.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="vocabulary">
-                                    <label for="vocabulary" class="font-semibold">Vocabulary</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="vocabulary">
+                                    <label for="vocabulary" class="font-semibold flex-1">Vocabulary</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1071,14 +1020,13 @@
                                 <div class="topic-item py-1">• Homonyms: Words with same spelling, different meanings.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="grammar">
-                                    <label for="grammar" class="font-semibold">Grammar</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="grammar">
+                                    <label for="grammar" class="font-semibold flex-1">Grammar</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1089,18 +1037,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Non-Verbal Reasoning -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-purple-700 mb-2">Non-Verbal Reasoning</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="patterns">
-                                    <label for="patterns" class="font-semibold">Patterns</label>
+                         <h3 class="font-bold text-lg text-purple-700 mb-2">Non-Verbal Reasoning</h3>
+                         <div class="topic p-2 rounded">
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="patterns">
+                                    <label for="patterns" class="font-semibold flex-1">Patterns</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1109,14 +1055,13 @@
                                 <div class="topic-item py-1">• Letter Patterns: Alphabetic sequences.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="shapes">
-                                    <label for="shapes" class="font-semibold">Shapes</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="shapes">
+                                    <label for="shapes" class="font-semibold flex-1">Shapes</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1125,14 +1070,13 @@
                                 <div class="topic-item py-1">• Symmetry: Line and rotational symmetry.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="spatial-reasoning">
-                                    <label for="spatial-reasoning" class="font-semibold">Spatial Reasoning</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="spatial-reasoning">
+                                    <label for="spatial-reasoning" class="font-semibold flex-1">Spatial Reasoning</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1143,34 +1087,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div> <!-- End Section III -->
+
             <!-- IV. Numerical Ability -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
                 <div class="section-title bg-red-600 text-white p-4 flex justify-between items-center" data-section="numerical-ability">
-                    <div class="flex items-center">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1">
                         <h2 class="text-xl font-bold">IV. Numerical Ability</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-red-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i>
                 </div>
                 <div class="section-content p-4">
                     <!-- Number System -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-red-700 mb-2">Number System</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="types-of-numbers">
-                                    <label for="types-of-numbers" class="font-semibold">Types of Numbers</label>
+                         <h3 class="font-bold text-lg text-red-700 mb-2">Number System</h3>
+                         <div class="topic p-2 rounded">
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="types-of-numbers">
+                                    <label for="types-of-numbers" class="font-semibold flex-1">Types of Numbers</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1182,14 +1125,13 @@
                                 <div class="topic-item py-1">• Irrational Numbers: √2, π, etc.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="properties-of-numbers">
-                                    <label for="properties-of-numbers" class="font-semibold">Properties of Numbers</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="properties-of-numbers">
+                                    <label for="properties-of-numbers" class="font-semibold flex-1">Properties of Numbers</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1200,14 +1142,13 @@
                                 <div class="topic-item py-1">• Composite Numbers: More than two factors.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="number-theory">
-                                    <label for="number-theory" class="font-semibold">Number Theory</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="number-theory">
+                                    <label for="number-theory" class="font-semibold flex-1">Number Theory</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1218,18 +1159,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Arithmetic -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Arithmetic</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-operations">
-                                    <label for="basic-operations" class="font-semibold">Basic Operations</label>
+                         <div class="topic p-2 rounded">
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="basic-operations">
+                                    <label for="basic-operations" class="font-semibold flex-1">Basic Operations</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1240,14 +1179,13 @@
                                 <div class="topic-item py-1">• Division: Quotient and remainder.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="percentages">
-                                    <label for="percentages" class="font-semibold">Percentages</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="percentages">
+                                    <label for="percentages" class="font-semibold flex-1">Percentages</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1255,14 +1193,13 @@
                                 <div class="topic-item py-1">• Percentage Increase/Decrease: Change over original.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="ratios-proportions">
-                                    <label for="ratios-proportions" class="font-semibold">Ratios and Proportions</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="ratios-proportions">
+                                    <label for="ratios-proportions" class="font-semibold flex-1">Ratios and Proportions</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1272,18 +1209,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Algebra -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Algebra</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="equations">
-                                    <label for="equations" class="font-semibold">Equations</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="equations">
+                                    <label for="equations" class="font-semibold flex-1">Equations</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1292,14 +1227,13 @@
                                 <div class="topic-item py-1">• Quadratic Equations: ax² + bx + c = 0.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="inequalities">
-                                    <label for="inequalities" class="font-semibold">Inequalities</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="inequalities">
+                                    <label for="inequalities" class="font-semibold flex-1">Inequalities</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1307,14 +1241,13 @@
                                 <div class="topic-item py-1">• Solving Inequalities: >, <, ≥, ≤.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="functions">
-                                    <label for="functions" class="font-semibold">Functions</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="functions">
+                                    <label for="functions" class="font-semibold flex-1">Functions</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1324,18 +1257,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Geometry -->
+                     <!-- Geometry -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Geometry</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="properties-of-shapes">
-                                    <label for="properties-of-shapes" class="font-semibold">Properties of Shapes</label>
+                         <div class="topic p-2 rounded">
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="properties-of-shapes">
+                                    <label for="properties-of-shapes" class="font-semibold flex-1">Properties of Shapes</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1345,14 +1276,13 @@
                                 <div class="topic-item py-1">• Circles: Radius, diameter, circumference, area.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="theorems">
-                                    <label for="theorems" class="font-semibold">Theorems</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="theorems">
+                                    <label for="theorems" class="font-semibold flex-1">Theorems</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1362,18 +1292,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Trigonometry -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Trigonometry</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-functions">
-                                    <label for="basic-functions" class="font-semibold">Basic Functions</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="basic-functions">
+                                    <label for="basic-functions" class="font-semibold flex-1">Basic Functions</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1381,14 +1309,13 @@
                                 <div class="topic-item py-1">• Sine, Cosine, Tangent: Ratios in right triangles.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="identities">
-                                    <label for="identities" class="font-semibold">Identities</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="identities">
+                                    <label for="identities" class="font-semibold flex-1">Identities</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1398,18 +1325,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Statistics -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Statistics</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="measures-of-central-tendency">
-                                    <label for="measures-of-central-tendency" class="font-semibold">Measures of Central Tendency</label>
+                         <div class="topic p-2 rounded">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="measures-of-central-tendency">
+                                    <label for="measures-of-central-tendency" class="font-semibold flex-1">Measures of Central Tendency</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1419,14 +1344,13 @@
                                 <div class="topic-item py-1">• Mode: Most frequent value.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="measures-of-dispersion">
-                                    <label for="measures-of-dispersion" class="font-semibold">Measures of Dispersion</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="measures-of-dispersion">
+                                    <label for="measures-of-dispersion" class="font-semibold flex-1">Measures of Dispersion</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1437,18 +1361,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Probability -->
+                     <!-- Probability -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-red-700 mb-2">Probability</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="basic-concepts">
-                                    <label for="basic-concepts" class="font-semibold">Basic Concepts</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="basic-concepts-prob"> <!-- Added suffix -->
+                                    <label for="basic-concepts-prob" class="font-semibold flex-1">Basic Concepts</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1457,14 +1379,13 @@
                                 <div class="topic-item py-1">• Events: Subsets of sample space.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="probability-rules">
-                                    <label for="probability-rules" class="font-semibold">Probability Rules</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="probability-rules">
+                                    <label for="probability-rules" class="font-semibold flex-1">Probability Rules</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1475,34 +1396,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div> <!-- End Section IV -->
+
             <!-- V. Quantitative Reasoning -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                <div class="section-title bg-yellow-600 text-white p-4 flex justify-between items-center" data-section="quantitative-reasoning">
-                    <div class="flex items-center">
+             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                 <div class="section-title bg-yellow-600 text-white p-4 flex justify-between items-center" data-section="quantitative-reasoning">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1">
                         <h2 class="text-xl font-bold">V. Quantitative Reasoning</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-yellow-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i>
                 </div>
                 <div class="section-content p-4">
                     <!-- Data Interpretation -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-yellow-700 mb-2">Data Interpretation</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-interpretation">
-                                    <label for="data-interpretation" class="font-semibold">Topics</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="data-interpretation">
+                                    <label for="data-interpretation" class="font-semibold flex-1">Topics</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1513,18 +1433,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Data Sufficiency -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-yellow-700 mb-2">Data Sufficiency</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="data-sufficiency">
-                                    <label for="data-sufficiency" class="font-semibold">Topics</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="data-sufficiency">
+                                    <label for="data-sufficiency" class="font-semibold flex-1">Topics</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1533,18 +1451,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Problem Solving -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-yellow-700 mb-2">Problem Solving</h3>
-                        
+                         <h3 class="font-bold text-lg text-yellow-700 mb-2">Problem Solving</h3>
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-problems">
-                                    <label for="word-problems" class="font-semibold">Word Problems</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="word-problems">
+                                    <label for="word-problems" class="font-semibold flex-1">Word Problems</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1554,14 +1470,13 @@
                                 <div class="topic-item py-1">• Speed and Distance: Distance, time, speed calculations.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="logical-math-problems">
-                                    <label for="logical-math-problems" class="font-semibold">Logical Math Problems</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="logical-math-problems">
+                                    <label for="logical-math-problems" class="font-semibold flex-1">Logical Math Problems</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1572,34 +1487,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- VI. English -->
+            </div> <!-- End Section V -->
+
+             <!-- VI. English -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
                 <div class="section-title bg-indigo-600 text-white p-4 flex justify-between items-center" data-section="english">
-                    <div class="flex items-center">
+                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1">
                         <h2 class="text-xl font-bold">VI. English</h2>
-                        <div class="ml-4 flex items-center">
+                        <div class="flex items-center">
                             <div class="w-32 h-2 bg-indigo-300 rounded-full">
                                 <div class="section-progress progress-bar bg-white rounded-full" style="width: 0%"></div>
                             </div>
                             <span class="ml-2 text-sm section-percentage">0%</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                    <i class="fas fa-chevron-down transform transition-transform ml-2 shrink-0"></i>
                 </div>
                 <div class="section-content p-4">
                     <!-- Reading Comprehension -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg text-indigo-700 mb-2">Reading Comprehension</h3>
-                        
+                         <h3 class="font-bold text-lg text-indigo-700 mb-2">Reading Comprehension</h3>
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="factual-passages">
-                                    <label for="factual-passages" class="font-semibold">Factual Passages</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="factual-passages">
+                                    <label for="factual-passages" class="font-semibold flex-1">Factual Passages</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1609,14 +1523,13 @@
                                 <div class="topic-item py-1">• Vocabulary in context.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="narrative-passages">
-                                    <label for="narrative-passages" class="font-semibold">Narrative Passages</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="narrative-passages">
+                                    <label for="narrative-passages" class="font-semibold flex-1">Narrative Passages</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1626,14 +1539,13 @@
                                 <div class="topic-item py-1">• Vocabulary in context.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="literary-passages">
-                                    <label for="literary-passages" class="font-semibold">Literary Passages</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="literary-passages">
+                                    <label for="literary-passages" class="font-semibold flex-1">Literary Passages</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1644,18 +1556,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Verbal Ability -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-indigo-700 mb-2">Verbal Ability</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="sentence-rearrangement">
-                                    <label for="sentence-rearrangement" class="font-semibold">Sentence Rearrangement</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="sentence-rearrangement">
+                                    <label for="sentence-rearrangement" class="font-semibold flex-1">Sentence Rearrangement</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1664,14 +1574,13 @@
                                 <div class="topic-item py-1">• Identifying logical sequence and transitions.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-selection">
-                                    <label for="word-selection" class="font-semibold">Word Selection</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="word-selection">
+                                    <label for="word-selection" class="font-semibold flex-1">Word Selection</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1680,14 +1589,13 @@
                                 <div class="topic-item py-1">• Ensuring appropriate usage.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="verbal-reasoning">
-                                    <label for="verbal-reasoning" class="font-semibold">Verbal Reasoning</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="verbal-reasoning">
+                                    <label for="verbal-reasoning" class="font-semibold flex-1">Verbal Reasoning</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1697,18 +1605,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Grammar and Usage -->
+                     <!-- Grammar and Usage -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-indigo-700 mb-2">Grammar and Usage</h3>
-                        
-                        <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="grammatical-errors">
-                                    <label for="grammatical-errors" class="font-semibold">Grammatical Errors</label>
+                         <div class="topic p-2 rounded">
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="grammatical-errors">
+                                    <label for="grammatical-errors" class="font-semibold flex-1">Grammatical Errors</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1718,14 +1624,13 @@
                                 <div class="topic-item py-1">• Pronoun-antecedent agreement and parallel structure.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="sentence-completion">
-                                    <label for="sentence-completion" class="font-semibold">Sentence Completion</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="sentence-completion">
+                                    <label for="sentence-completion" class="font-semibold flex-1">Sentence Completion</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1735,18 +1640,16 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Vocabulary -->
                     <div class="mb-4">
                         <h3 class="font-bold text-lg text-indigo-700 mb-2">Vocabulary</h3>
-                        
                         <div class="topic p-2 rounded">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="synonyms-antonyms">
-                                    <label for="synonyms-antonyms" class="font-semibold">Synonyms and Antonyms</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="synonyms-antonyms">
+                                    <label for="synonyms-antonyms" class="font-semibold flex-1">Synonyms and Antonyms</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1755,14 +1658,13 @@
                                 <div class="topic-item py-1">• Including nuances in meanings.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-meanings">
-                                    <label for="word-meanings" class="font-semibold">Word Meanings and Usage</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="word-meanings">
+                                    <label for="word-meanings" class="font-semibold flex-1">Word Meanings and Usage</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1771,14 +1673,13 @@
                                 <div class="topic-item py-1">• Homonyms, homophones, and homographs.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="idioms-phrases">
-                                    <label for="idioms-phrases" class="font-semibold">Idioms and Phrases</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="idioms-phrases">
+                                    <label for="idioms-phrases" class="font-semibold flex-1">Idioms and Phrases</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1787,14 +1688,13 @@
                                 <div class="topic-item py-1">• Common idiomatic expressions.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="phrasal-verbs">
-                                    <label for="phrasal-verbs" class="font-semibold">Phrasal Verbs</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="phrasal-verbs">
+                                    <label for="phrasal-verbs" class="font-semibold flex-1">Phrasal Verbs</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1803,14 +1703,13 @@
                                 <div class="topic-item py-1">• Differentiating between similar phrasal verbs.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="figures-of-speech">
-                                    <label for="figures-of-speech" class="font-semibold">Figures of Speech</label>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="figures-of-speech">
+                                    <label for="figures-of-speech" class="font-semibold flex-1">Figures of Speech</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1819,14 +1718,13 @@
                                 <div class="topic-item py-1">• Metaphors, similes, personification, hyperbole, etc.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="word-analogy">
-                                    <label for="word-analogy" class="font-semibold">Word Analogy</label>
+                             <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="word-analogy">
+                                    <label for="word-analogy" class="font-semibold flex-1">Word Analogy</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1835,14 +1733,13 @@
                                 <div class="topic-item py-1">• Part-whole, cause-effect, etc.</div>
                             </div>
                         </div>
-                        
                         <div class="topic p-2 rounded mt-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <input type="checkbox" class="custom-checkbox topic-checkbox" id="spelling-errors">
-                                    <label for="spelling-errors" class="font-semibold">Spelling Errors</label>
+                           <div class="flex justify-between items-start">
+                                <div class="flex items-start mr-2">
+                                    <input type="checkbox" class="custom-checkbox topic-checkbox mt-1" id="spelling-errors">
+                                    <label for="spelling-errors" class="font-semibold flex-1">Spelling Errors</label>
                                 </div>
-                                <button class="highlight-btn text-yellow-500 focus:outline-none" title="Highlight to remember">
+                                <button class="highlight-btn text-yellow-500 focus:outline-none shrink-0" title="Highlight to remember">
                                     <i class="fas fa-star"></i>
                                 </button>
                             </div>
@@ -1853,16 +1750,18 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </div> <!-- End Section VI -->
+
+        </div> <!-- End #syllabus-content -->
+    </div> <!-- End .container -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize local storage
-            const completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || {};
-            const highlightedTopics = JSON.parse(localStorage.getItem('highlightedTopics')) || {};
-            
+            let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || {};
+            let highlightedTopics = JSON.parse(localStorage.getItem('highlightedTopics')) || {};
+            let expandedSections = JSON.parse(localStorage.getItem('expandedSections')) || {};
+
             // Elements
             const sectionTitles = document.querySelectorAll('.section-title');
             const topicCheckboxes = document.querySelectorAll('.topic-checkbox');
@@ -1872,189 +1771,331 @@
             const resetProgressBtn = document.getElementById('reset-progress');
             const searchInput = document.getElementById('search-input');
             const topics = document.querySelectorAll('.topic');
-            
-            // Toggle section content
+            const syllabusContent = document.getElementById('syllabus-content'); // Get parent container
+
+            // Toggle section content and save state
             sectionTitles.forEach(title => {
+                const sectionId = title.getAttribute('data-section');
+                const content = title.nextElementSibling;
+                const icon = title.querySelector('i.fa-chevron-down');
+
+                // Restore expanded state
+                if (expandedSections[sectionId]) {
+                     content.classList.add('active');
+                     if(icon) icon.classList.add('rotate-180');
+                } else {
+                     content.classList.remove('active');
+                     if(icon) icon.classList.remove('rotate-180');
+                }
+
+
                 title.addEventListener('click', function() {
-                    const content = this.nextElementSibling;
-                    content.classList.toggle('active');
-                    this.querySelector('i').classList.toggle('rotate-180');
-                    updateProgress();
+                    const isActive = content.classList.toggle('active');
+                    if(icon) icon.classList.toggle('rotate-180', isActive); // Use second argument for toggle
+
+                    // Save state
+                    if (isActive) {
+                        expandedSections[sectionId] = true;
+                    } else {
+                        delete expandedSections[sectionId];
+                    }
+                    localStorage.setItem('expandedSections', JSON.stringify(expandedSections));
+                    // updateProgress() is called elsewhere, no need here unless needed immediately
                 });
             });
-            
+
             // Mark topic as completed
             topicCheckboxes.forEach(checkbox => {
+                const topic = checkbox.closest('.topic');
+                const label = topic.querySelector('label'); // Get label for potential styling
+
                 // Load saved state
                 if (completedTopics[checkbox.id]) {
                     checkbox.checked = true;
-                    checkbox.closest('.topic').classList.add('completed');
+                    topic.classList.add('completed');
+                    if(label) label.classList.add('completed'); // Style label too if needed
                 }
-                
+
                 checkbox.addEventListener('change', function() {
-                    const topic = this.closest('.topic');
-                    
                     if (this.checked) {
                         topic.classList.add('completed');
+                        if(label) label.classList.add('completed');
                         completedTopics[this.id] = true;
                     } else {
                         topic.classList.remove('completed');
+                        if(label) label.classList.remove('completed');
                         delete completedTopics[this.id];
                     }
-                    
+
                     localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
                     updateProgress();
                 });
             });
-            
+
             // Highlight topics to remember
             highlightButtons.forEach(button => {
                 const topic = button.closest('.topic');
-                const topicId = topic.querySelector('.topic-checkbox').id;
-                
+                const topicId = topic.querySelector('.topic-checkbox')?.id; // Use optional chaining
+
+                if (!topicId) return; // Skip if no checkbox found
+
                 // Load saved state
                 if (highlightedTopics[topicId]) {
                     button.classList.add('active');
                     topic.classList.add('highlighted');
                 }
-                
-                button.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    topic.classList.toggle('highlighted');
-                    
-                    if (topic.classList.contains('highlighted')) {
+
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent section toggle when clicking button
+                    const isActive = this.classList.toggle('active');
+                    topic.classList.toggle('highlighted', isActive);
+
+                    if (isActive) {
                         highlightedTopics[topicId] = true;
                     } else {
                         delete highlightedTopics[topicId];
                     }
-                    
+
                     localStorage.setItem('highlightedTopics', JSON.stringify(highlightedTopics));
                 });
             });
-            
+
             // Expand/Collapse all sections
             expandAllBtn.addEventListener('click', function() {
+                expandedSections = {}; // Reset saved state for consistency
                 document.querySelectorAll('.section-content').forEach(content => {
                     content.classList.add('active');
+                    const sectionId = content.previousElementSibling?.getAttribute('data-section');
+                    if(sectionId) expandedSections[sectionId] = true;
                 });
-                document.querySelectorAll('.section-title i').forEach(icon => {
+                document.querySelectorAll('.section-title i.fa-chevron-down').forEach(icon => {
                     icon.classList.add('rotate-180');
                 });
+                 localStorage.setItem('expandedSections', JSON.stringify(expandedSections));
             });
-            
+
             collapseAllBtn.addEventListener('click', function() {
+                expandedSections = {}; // Reset saved state
                 document.querySelectorAll('.section-content').forEach(content => {
                     content.classList.remove('active');
                 });
-                document.querySelectorAll('.section-title i').forEach(icon => {
+                document.querySelectorAll('.section-title i.fa-chevron-down').forEach(icon => {
                     icon.classList.remove('rotate-180');
                 });
+                 localStorage.setItem('expandedSections', JSON.stringify(expandedSections));
             });
-            
+
             // Reset progress
             resetProgressBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                if (confirm('Are you sure you want to reset all progress and highlights? This cannot be undone.')) {
+                    // Clear storage
                     localStorage.removeItem('completedTopics');
                     localStorage.removeItem('highlightedTopics');
-                    
+                    completedTopics = {}; // Reset in-memory object
+                    highlightedTopics = {}; // Reset in-memory object
+
+                    // Update UI for Checkboxes
                     topicCheckboxes.forEach(checkbox => {
                         checkbox.checked = false;
-                        checkbox.closest('.topic').classList.remove('completed');
+                        const topic = checkbox.closest('.topic');
+                        const label = topic.querySelector('label');
+                        topic.classList.remove('completed');
+                         if(label) label.classList.remove('completed');
                     });
-                    
+
+                    // Update UI for Highlights
                     highlightButtons.forEach(button => {
                         button.classList.remove('active');
                         button.closest('.topic').classList.remove('highlighted');
                     });
-                    
-                    updateProgress();
+
+                    updateProgress(); // Recalculate progress (will be 0)
                 }
             });
-            
-            // Search functionality
+
+            // Search functionality (Improved)
+            let searchTimeout;
             searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                // Remove previous highlights
-                document.querySelectorAll('.search-highlight').forEach(el => {
-                    el.classList.remove('search-highlight');
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(this.value.trim().toLowerCase());
+                }, 300); // Debounce search input slightly
+            });
+
+            function performSearch(searchTerm) {
+                // Clear previous highlights by removing the class from the text node's parent
+                syllabusContent.querySelectorAll('span.search-highlight-wrapper').forEach(wrapper => {
+                    wrapper.replaceWith(wrapper.textContent); // Replace wrapper span with its text content
                 });
-                
-                if (searchTerm.length < 2) return;
-                
-                topics.forEach(topic => {
-                    const topicText = topic.textContent.toLowerCase();
-                    const matched = topicText.includes(searchTerm);
-                    
-                    topic.style.display = matched ? 'block' : 'none';
-                    
-                    if (matched) {
-                        // Make sure the section is expanded
-                        let parent = topic.parentElement;
-                        while (parent && !parent.classList.contains('section-content')) {
-                            parent = parent.parentElement;
+
+
+                // Hide/show sections/topics based on search
+                const hasSearchTerm = searchTerm.length >= 2;
+                let foundMatch = false;
+
+                document.querySelectorAll('.bg-white.rounded-lg.shadow-md.overflow-hidden.mb-6').forEach(sectionContainer => {
+                    let sectionHasMatch = false;
+                    const sectionContent = sectionContainer.querySelector('.section-content');
+                    const sectionTopics = sectionContent.querySelectorAll('.topic');
+
+                    sectionTopics.forEach(topic => {
+                        const topicText = topic.textContent.toLowerCase();
+                        const isMatch = hasSearchTerm && topicText.includes(searchTerm);
+
+                        if (isMatch) {
+                            sectionHasMatch = true;
+                            foundMatch = true;
+                            topic.style.display = 'block';
+                            // Highlight matching text within the topic
+                             highlightTextInNode(topic, searchTerm);
+                        } else {
+                            topic.style.display = hasSearchTerm ? 'none' : 'block'; // Hide if searching and no match, show otherwise
                         }
-                        if (parent) {
-                            parent.classList.add('active');
-                            const title = parent.previousElementSibling;
-                            if (title) {
-                                title.querySelector('i').classList.add('rotate-180');
-                            }
+                    });
+
+                    // Show/hide the entire section container based on matches within it
+                    if (hasSearchTerm) {
+                        sectionContainer.style.display = sectionHasMatch ? 'block' : 'none';
+                        // Optionally expand sections with matches
+                        if (sectionHasMatch) {
+                            const title = sectionContainer.querySelector('.section-title');
+                            const content = sectionContainer.querySelector('.section-content');
+                            const icon = title?.querySelector('i.fa-chevron-down');
+                            content.classList.add('active');
+                            if(icon) icon.classList.add('rotate-180');
                         }
-                        
-                        // Highlight the matching text
-                        const topicItems = topic.querySelectorAll('.topic-item');
-                        topicItems.forEach(item => {
-                            if (item.textContent.toLowerCase().includes(searchTerm)) {
-                                item.classList.add('search-highlight');
-                            }
-                        });
+                    } else {
+                        sectionContainer.style.display = 'block'; // Show all sections if search is cleared
                     }
                 });
-                
-                // If search is cleared, show all topics
-                if (searchTerm === '') {
-                    topics.forEach(topic => {
-                        topic.style.display = 'block';
-                    });
+
+                 // If no matches found anywhere, maybe show a message? (Optional)
+                 // console.log("Found match:", foundMatch);
+            }
+
+             function highlightTextInNode(node, searchTerm) {
+                 if (!node || !searchTerm) return;
+
+                const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
+                let textNode;
+                const nodesToReplace = [];
+
+                while (textNode = walker.nextNode()) {
+                    // Avoid highlighting within script/style tags or already highlighted spans
+                    if (textNode.parentElement.nodeName === 'SCRIPT' ||
+                        textNode.parentElement.nodeName === 'STYLE' ||
+                        textNode.parentElement.classList.contains('search-highlight-wrapper')) {
+                        continue;
+                    }
+
+                    const text = textNode.textContent;
+                    const lowerText = text.toLowerCase();
+                    let startIndex = 0;
+                    let index = lowerText.indexOf(searchTerm, startIndex);
+                    const fragments = [];
+
+                    while (index !== -1) {
+                        // Add text before the match
+                        if (index > startIndex) {
+                            fragments.push(document.createTextNode(text.substring(startIndex, index)));
+                        }
+                        // Add the highlighted match
+                        const matchText = text.substring(index, index + searchTerm.length);
+                        const span = document.createElement('span');
+                        span.className = 'search-highlight-wrapper bg-yellow-200 font-semibold'; // Style wrapper
+                        span.textContent = matchText;
+                        fragments.push(span);
+
+                        startIndex = index + searchTerm.length;
+                        index = lowerText.indexOf(searchTerm, startIndex);
+                    }
+
+                    // Add any remaining text after the last match
+                    if (startIndex < text.length) {
+                        fragments.push(document.createTextNode(text.substring(startIndex)));
+                    }
+
+                    // If we found matches, schedule this text node for replacement
+                    if (fragments.length > 0) {
+                         nodesToReplace.push({originalNode: textNode, newNodes: fragments});
+                    }
                 }
-            });
-            
+
+                 // Replace the original text nodes with the fragments containing highlighted spans
+                 nodesToReplace.forEach(item => {
+                    item.originalNode.replaceWith(...item.newNodes);
+                 });
+            }
+
+
             // Calculate and update progress
             function updateProgress() {
                 // Overall progress
                 const totalTopics = topicCheckboxes.length;
-                const completedCount = Object.keys(completedTopics).length;
-                const overallPercentage = Math.round((completedCount / totalTopics) * 100);
-                
+                const completedCount = Object.values(completedTopics).filter(Boolean).length; // More robust count
+                const overallPercentage = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
+
                 document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
                 document.getElementById('progress-percentage').textContent = `${overallPercentage}%`;
-                
+
                 // Section progress
-                const sections = document.querySelectorAll('.section-title');
-                sections.forEach(section => {
-                    const sectionId = section.getAttribute('data-section');
-                    const sectionContent = section.nextElementSibling;
+                sectionTitles.forEach(title => {
+                    const sectionContent = title.nextElementSibling;
                     const sectionCheckboxes = sectionContent.querySelectorAll('.topic-checkbox');
-                    
+                    const progressBar = title.querySelector('.section-progress');
+                    const percentageSpan = title.querySelector('.section-percentage');
+
                     let sectionCompleted = 0;
                     sectionCheckboxes.forEach(checkbox => {
+                        // Use the live state, not just the stored object which might be stale if called before saving
                         if (checkbox.checked) {
                             sectionCompleted++;
                         }
                     });
-                    
-                    const sectionPercentage = Math.round((sectionCompleted / sectionCheckboxes.length) * 100);
-                    section.querySelector('.section-progress').style.width = `${sectionPercentage}%`;
-                    section.querySelector('.section-percentage').textContent = `${sectionPercentage}%`;
+
+                    const sectionTotal = sectionCheckboxes.length;
+                    const sectionPercentage = sectionTotal > 0 ? Math.round((sectionCompleted / sectionTotal) * 100) : 0;
+
+                    if (progressBar) progressBar.style.width = `${sectionPercentage}%`;
+                    if (percentageSpan) percentageSpan.textContent = `${sectionPercentage}%`;
                 });
             }
-            
+
             // Initial setup
             updateProgress();
-            // Open first section by default
-            //document.querySelector('.section-content').classList.add('active');
-            //document.querySelector('.section-title i').classList.add('rotate-180');
+            // Apply initial search if needed (e.g., from URL parameter - optional)
+            // performSearch(searchInput.value.trim().toLowerCase());
+
+            // Make topic labels clickable to toggle checkbox (Accessibility improvement)
+             document.querySelectorAll('.topic label').forEach(label => {
+                label.addEventListener('click', function(e) {
+                    // Don't interfere if the click was directly on the checkbox input itself
+                    if (e.target.nodeName !== 'INPUT') {
+                         const checkbox = document.getElementById(this.htmlFor);
+                         if (checkbox) {
+                             checkbox.checked = !checkbox.checked;
+                             // Manually trigger the change event to update storage and progress
+                             checkbox.dispatchEvent(new Event('change'));
+                         }
+                    }
+                });
+             });
+
+             // Also slightly adjust topic layout for better wrapping
+            document.querySelectorAll('.topic > .flex.justify-between').forEach(div => {
+                 div.classList.remove('items-center');
+                 div.classList.add('items-start'); // Align checkbox/button to top of label
+            });
+            document.querySelectorAll('.topic > .flex.justify-between > div:first-child').forEach(div => {
+                 div.classList.add('items-start', 'mr-2'); // Wrap checkbox and label
+                 div.querySelector('input[type="checkbox"]')?.classList.add('mt-1'); // Align checkbox better
+                 div.querySelector('label')?.classList.add('flex-1'); // Allow label to take space
+            });
+             document.querySelectorAll('.topic > .flex.justify-between > button.highlight-btn').forEach(button => {
+                 button.classList.add('shrink-0'); // Prevent button from shrinking
+            });
+
+
         });
     </script>
 </body>
